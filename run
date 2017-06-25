@@ -1,0 +1,2 @@
+#!/bin/bash -e
+java -cp /Users/dan/dev/kotlinc/lib/kotlin-runtime.jar:classes:target/classes:/Users/dan/.m2/repository//com/fizzed/rocker-runtime/0.20.0/rocker-runtime-0.20.0.jar:/Users/dan/.m2/repository//org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21.jar HelloKt

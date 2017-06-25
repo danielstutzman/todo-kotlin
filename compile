@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+mvn compile
+
+~/dev/nailgun-nailgun-all-0.9.1/ng \
+  org.jetbrains.kotlin.preloading.Preloader \
+  org.jetbrains.kotlin.cli.jvm.K2JVMCompiler \
+  $PWD/hello.kt \
+  -d $PWD/classes \
+  -cp $PWD/target/classes:/Users/dan/.m2/repository//com/fizzed/rocker-runtime/0.20.0/rocker-runtime-0.20.0.jar
