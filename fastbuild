@@ -69,7 +69,8 @@ if [ "$KTS" != "" ]; then
   else
     # Failure
     cat 1>&2 stderr-output
+    rm stderr-output
+    exit 1
   fi
   set -e
-  rm stderr-output
 fi
