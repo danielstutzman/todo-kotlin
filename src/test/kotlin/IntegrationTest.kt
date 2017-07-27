@@ -106,10 +106,10 @@ fun post(url: URL, cookies: Map<String, String>, authToken: String): String {
   }
 }
 
-class HelloTest {
+class IntegrationTest {
   companion object {
     @JvmStatic public fun main(args: Array<String>) {
-      HelloTest().testSignInSuccess()
+      IntegrationTest().testSignInSuccess()
     }
   }
 
