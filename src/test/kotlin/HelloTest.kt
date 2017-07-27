@@ -52,6 +52,16 @@ class HelloTest {
     return Pair(cookies, foundToken)
   }
 
+  fun urlEncodeParams(params: Map<String, String>): String {
+    val joiner = StringJoiner("&")
+    for ((key, value) in params) {
+      joiner.add(URLEncoder.encode(key, "UTF-8")
+          + "="
+          + URLEncoder.encode(value, "UTF-8"))
+    }
+    return joiner.toString()
+  }
+
   /** @return body of POST (might follow redirect) */
   fun post(url: URL, cookies: List<String>, authToken: String): String {
     val http = url.openConnection() as HttpURLConnection
@@ -60,26 +70,15 @@ class HelloTest {
     for (cookie in cookies) {
       http.addRequestProperty("Cookie", cookie.split(";".toRegex(), 2)[0])
     }
+    http.setRequestProperty("Content-Type",
+        "application/x-www-form-urlencoded; charset=UTF-8")
+    http.connect()
 
     val params = HashMap<String, String>()
     params.put("user[email]", "a@a.com")
     params.put("user[password]", "password")
     params.put("authenticity_token", authToken)
-
-    val joiner = StringJoiner("&")
-    for ((key, value) in params) {
-      joiner.add(URLEncoder.encode(key, "UTF-8")
-          + "="
-          + URLEncoder.encode(value, "UTF-8"))
-    }
-
-    val paramsBytes = joiner.toString().toByteArray()
-    http.setRequestProperty("Content-Type",
-        "application/x-www-form-urlencoded; charset=UTF-8")
-    http.connect()
-    http.outputStream.use { outStream ->
-      outStream.write(paramsBytes)
-    }
+    http.outputStream.write(urlEncodeParams(params).toByteArray())
 
     val body = http.inputStream.bufferedReader().use { it.readText() }
     return body
