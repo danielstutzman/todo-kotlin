@@ -1,0 +1,48 @@
+#!/bin/bash -e
+
+NAILGUN_DIR=../nailgun-nailgun-all-0.9.1
+KOTLINC_DIR=../kotlinc
+
+if [[ `ps aux | grep NGServer | grep -v grep` = "" ]]; then
+  echo "Starting Nailgun server..."
+  java -Xmx256M -Xms32M -noverify \
+    -cp $NAILGUN_DIR/nailgun-server/target/classes:$KOTLINC_DIR/lib/kotlin-preloader.jar:$KOTLINC_DIR/lib/kotlin-compiler.jar \
+    com.martiansoftware.nailgun.NGServer &
+fi
+
+for HTML in `find src/main/resources/rocker/views -name "*.rocker.html"`; do
+  CLASS=$HTML
+
+  # replace src/main/resources/rocker/ with target/classes
+  CLASS=${CLASS/src\/main\/resources\/rocker\//target\/classes\/}
+
+  # replace .rocker.html with .class
+  CLASS=${CLASS/.rocker.html/.class}
+
+  if [[ $HTML -nt $CLASS ]]; then RECOMPILE_VIEWS=1; fi
+done
+
+if [ ! -e .mvn-classpath ]; then
+  mvn dependency:build-classpath -Dmdep.outputFile=.mvn-classpath
+fi
+
+if [ "$RECOMPILE_VIEWS" != "" ]; then
+  echo "Compiling .html to .java"
+  time java -cp `cat .mvn-classpath` \
+    com.fizzed.rocker.compiler.JavaGeneratorMain
+
+  echo "Compiling .java views to .class"
+  time javac \
+    -cp /Users/dan/.m2/repository/com/fizzed/rocker-runtime/0.20.0/rocker-runtime-0.20.0.jar \
+    target/generated-sources/rocker/views/*.java \
+    -d target/classes
+fi
+
+echo "Compiling .kt to .class"
+time $NAILGUN_DIR/ng \
+  org.jetbrains.kotlin.preloading.Preloader \
+  org.jetbrains.kotlin.cli.jvm.K2JVMCompiler \
+  $PWD/src/main/kotlin/*.kt \
+  -d $PWD/target/classes \
+  -cp $PWD/target/classes:/Users/dan/.m2/repository//com/fizzed/rocker-runtime/0.20.0/rocker-runtime-0.20.0.jar \
+  -verbose 2>&1 | grep class
