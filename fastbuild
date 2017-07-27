@@ -39,10 +39,20 @@ if [ "$RECOMPILE_VIEWS" != "" ]; then
 fi
 
 echo "Compiling .kt to .class"
+set +e
 time $NAILGUN_DIR/ng \
   org.jetbrains.kotlin.preloading.Preloader \
   org.jetbrains.kotlin.cli.jvm.K2JVMCompiler \
-  $PWD/src/main/kotlin/*.kt \
+  $PWD/src/main/kotlin/*.kt $PWD/src/test/kotlin/*.kt \
   -d $PWD/target/classes \
-  -cp $PWD/target/classes:/Users/dan/.m2/repository//com/fizzed/rocker-runtime/0.20.0/rocker-runtime-0.20.0.jar \
-  -verbose 2>&1 | grep class
+  -cp `cat .mvn-classpath`:target/classes \
+  -verbose 2> stderr-output
+set -e
+if [ "$?" = "0" ]; then
+  # Success
+  grep class$ stderr-output | sort 1>&2
+else
+  # Failure
+  cat 1>&2 stderr-output
+fi
+rm stderr-output
