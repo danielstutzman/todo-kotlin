@@ -38,21 +38,38 @@ if [ "$RECOMPILE_VIEWS" != "" ]; then
     -d target/classes
 fi
 
-echo "Compiling .kt to .class"
-set +e
-time $NAILGUN_DIR/ng \
-  org.jetbrains.kotlin.preloading.Preloader \
-  org.jetbrains.kotlin.cli.jvm.K2JVMCompiler \
-  $PWD/src/main/kotlin/*.kt $PWD/src/test/kotlin/*.kt \
-  -d $PWD/target/classes \
-  -cp `cat .mvn-classpath`:target/classes \
-  -verbose 2> stderr-output
-set -e
-if [ "$?" = "0" ]; then
-  # Success
-  grep class$ stderr-output | sort 1>&2
-else
-  # Failure
-  cat 1>&2 stderr-output
+for KT in `find src/main/kotlin -name "*.kt"` `find src/test/kotlin -name "*.kt"`; do
+  CLASS=$KT
+
+  # replace src/main/kotlin/ with target/classes
+  CLASS=${CLASS/src\/main\/kotlin\//target\/classes\/}
+
+  # replace src/test/kotlin/ with target/classes
+  CLASS=${CLASS/src\/test\/kotlin\//target\/classes\/}
+
+  if [[ $KT -nt ${CLASS/.kt/.class} && $KT -nt ${CLASS/.kt/Kt.class} ]]; then
+    KTS="$KTS $KT"
+  fi
+done
+echo $KTS
+
+if [ "$KTS" != "" ]; then
+  echo "Compiling .kt to .class"
+  set +e
+  time $NAILGUN_DIR/ng \
+    org.jetbrains.kotlin.preloading.Preloader \
+    org.jetbrains.kotlin.cli.jvm.K2JVMCompiler \
+    $KTS \
+    -d $PWD/target/classes \
+    -cp `cat .mvn-classpath`:target/classes \
+    -verbose 2> stderr-output
+  if [ "$?" = "0" ]; then
+    # Success
+    grep class$ stderr-output | sort 1>&2
+  else
+    # Failure
+    cat 1>&2 stderr-output
+  fi
+  set -e
+  rm stderr-output
 fi
-rm stderr-output
