@@ -24,6 +24,17 @@ class HelloTest {
 
   fun getForCookiesAndAuthToken(url: URL): Pair<List<String>, String> {
     val http = url.openConnection() as HttpURLConnection
+
+    try {
+      http.connect()
+    } catch (e: java.net.ConnectException) {
+      throw RuntimeException("Couldn't connect to ${url}", e)
+    }
+
+    if (http.responseCode != HttpURLConnection.HTTP_OK) {
+      throw RuntimeException("Got ${http.responseCode} from ${url}")
+    }
+
     val cookies: List<String>? = http.headerFields.get("Set-Cookie")
     if (cookies == null) {
       throw NullPointerException("Can't find Set-Cookie header")
