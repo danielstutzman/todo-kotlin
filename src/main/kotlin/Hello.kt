@@ -1,12 +1,11 @@
 import com.sun.net.httpserver.HttpServer
+import java.io.File
 import java.net.InetSocketAddress
 import java.sql.DriverManager
 
-
-fun main(args: Array<String>) {
-  val jdbcUrl = "jdbc:postgresql://localhost:5432/todo-go"
-  Class.forName("org.postgresql.Driver")
-  val conn = DriverManager.getConnection(jdbcUrl, "dan", "")
+fun testDatabase(creds: PostgresCredentials) {
+  val jdbcUrl = "jdbc:postgresql://${creds.hostname}:${creds.port}/${creds.databaseName}"
+  val conn = DriverManager.getConnection(jdbcUrl, creds.username, creds.password)
   val stmt = conn.createStatement()
   val rset = stmt.executeQuery("SELECT 1")
   while (rset.next()) {
@@ -15,6 +14,13 @@ fun main(args: Array<String>) {
   rset.close()
   stmt.close()
   conn.close()
+}
+
+fun main(args: Array<String>) {
+  val configJson = File("config/dev.json").readText()
+  val config = parseConfigJson(configJson)
+
+  testDatabase(config.postgresCredentials)
 
   println("Starting server on 8000...")
   val server = HttpServer.create(InetSocketAddress(8000), 0);

@@ -1,0 +1,10 @@
+{
+  "postgresCredentials": {
+    "hostname": "localhost",
+    "port": 5432,
+    "sslMode": "disable",
+    "username": "dan",
+    "password": "",
+    "databaseName": "todo-kotlin"
+  }
+}
