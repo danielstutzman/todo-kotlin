@@ -78,6 +78,7 @@
 							<version>0.20.0</version>
               <configuration>
                 <javaVersion>1.6</javaVersion>
+                <templateDirectory>${project.basedir}/src/main/resources/rocker</templateDirectory>
               </configuration>
 							<executions>
 									<execution>
