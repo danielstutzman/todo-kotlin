@@ -16,4 +16,4 @@
 
 # How to run migations
 
-`mvn flyway:migrate`
+`mvn flyway:migrate jooq-codegen:generate`
