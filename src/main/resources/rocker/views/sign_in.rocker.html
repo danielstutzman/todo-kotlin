@@ -1,0 +1,29 @@
+@args (String message)
+
+@views.devise_layout.template() -> {
+  <h2>Sign in</h2>
+  <form accept-charset="UTF-8" action="/users/sign_in" class="simple_form new_user" id="new_user" method="post">
+    <div style="margin:0;padding:0;display:inline">
+      <input name="utf8" type="hidden" value="✓">
+      <input name="authenticity_token" type="hidden" value="{{ .AuthenticityToken }}" />
+    </div>
+    <div class='form-inputs'>
+      <div class="input email optional user_email">
+        <label class="email optional" for="user_email">Email</label>
+        <input autofocus="autofocus" class="string email optional" id="user_email" maxlength="255" name="user[email]" size="255" type="email" value="{{ .FormValues.Email }}" />
+      </div>
+      <div class="input password optional user_password">
+        <label class="password optional" for="user_password">Password</label>
+        <input class="password optional" id="user_password" maxlength="128" name="user[password]" size="128" type="password" />
+      </div>
+      <div class="input boolean optional user_remember_me">
+        <input name="user[remember_me]" type="hidden" value="0">
+        <input class="boolean optional" id="user_remember_me" name="user[remember_me]" type="checkbox" value="1">
+        <label class="boolean optional" for="user_remember_me">Remember me</label>
+      </div>
+    </div>
+    <div class='form-actions'>
+      <input class="button btn btn-primary" name="commit" type="submit" value="Sign in" />
+    </div>
+  </form>
+}
