@@ -2,7 +2,7 @@ import com.google.gson.Gson
 
 data class PostgresCredentials(
     val hostname: String,
-    val port: Integer,
+    val port: Int,
     val sslMode: String,
     val username: String,
     val password: String,
@@ -14,6 +14,7 @@ data class Config(
 )
 
 /** @Throws com.google.gson.JsonSyntaxException */
+@Suppress("SENSELESS_COMPARISON")
 fun parseConfigJson(json: String): Config {
   val config: Config = Gson().fromJson(json, Config::class.java)
   if (config.postgresCredentials == null) {
