@@ -14,7 +14,10 @@ data class Config(
 )
 
 /** @Throws com.google.gson.JsonSyntaxException */
+
+// suppress warning from comparing String to null
 @Suppress("SENSELESS_COMPARISON")
+
 fun parseConfigJson(json: String): Config {
   val config: Config = Gson().fromJson(json, Config::class.java)
   if (config.postgresCredentials == null) {
