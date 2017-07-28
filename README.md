@@ -9,3 +9,11 @@
 `mvn test-compile && java -cp $(cat .mvn-classpath):target/classes:target/test-classes IntegrationTest`
 
 (Optionally, run `./fastbuild` instead of `mvn compile` or `mvn test-compile`)
+
+# How to delete database
+
+`mvn flyway:clean`
+
+# How to run migations
+
+`mvn flyway:migrate`
