@@ -1,11 +1,12 @@
-import com.sun.net.httpserver.HttpServer
 import org.jooq.SQLDialect
 import org.jooq.generated.Tables.USERS
 import org.jooq.impl.DSL
+import spark.ModelAndView
+import spark.Service
 import java.io.File
-import java.net.InetSocketAddress
 import java.sql.DriverManager
 import java.sql.Timestamp
+import java.util.*
 
 
 fun testDatabase(creds: PostgresCredentials) {
@@ -84,7 +85,26 @@ fun main(args: Array<String>) {
   testDatabase(config.postgresCredentials)
 
   println("Starting server on 8000...")
-  val server = HttpServer.create(InetSocketAddress(8000), 0);
-  server.createContext("/", MyHandler())
-  server.start()
+  Service.ignite().port(8080).let { service ->
+    service.initExceptionHandler { e ->
+      e.printStackTrace()
+    }
+
+    if (true) { // if development mode
+      service.staticFiles.location("/public")
+      val projectDir = System.getProperty("user.dir")
+      val staticDir = "/src/main/resources/public"
+      service.staticFiles.externalLocation(projectDir + staticDir)
+    }
+
+    service.get("/") { req, res ->
+      res.redirect("/users/sign_in")
+    }
+
+    service.get("/users/sign_in") { req, res ->
+      val model = HashMap<String, Any>()
+      RockerEngine().render(ModelAndView(
+          model, "views/sign_in.rocker.html"))
+    }
+  }
 }
