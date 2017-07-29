@@ -1,33 +1,36 @@
 package appPkg
 
+import dbPkg.EmailAlreadyTaken
+import dbPkg.UserCreated
+import views.SignUpErrors
+import views.SignUpForm
+
 const val MIN_PASSWORD_LENGTH = 8
 val EMAIL_ALREADY_TAKEN_ERROR = "has already been taken"
-val PASSWORD_IS_TOO_SHORT_ERROR = "is too short (minimum is ${MIN_PASSWORD_LENGTH} characters)"
-val PASSWORD_CONFIRMATION_DOESNT_MATCH_ERROR = "doesn't match Password"
 
 sealed class UsersSignUpPostOutput
-object PasswordIsTooShort : UsersSignUpPostOutput()
-object PasswordConfirmationDoesntMatchError : UsersSignUpPostOutput()
+data class SignUpFailure(val errors: SignUpErrors) : UsersSignUpPostOutput()
 object SignUpSuccess : UsersSignUpPostOutput()
 
 fun App.handleUsersSignUpPost(form: SignUpForm): UsersSignUpPostOutput {
   if (form.passwordConfirmation != form.password) {
-    return PasswordConfirmationDoesntMatchError
+    return SignUpFailure(SignUpErrors().setPasswordConfirmation(
+        "doesn't match Password"))
   }
 
   if (form.password.length < MIN_PASSWORD_LENGTH) {
-    return PasswordIsTooShort
+    return SignUpFailure(SignUpErrors().setPassword(
+        "is too short (minimum is ${MIN_PASSWORD_LENGTH} characters)"))
   }
 
   val encryptedPassword = "hash"
 
-  db.createUser(form.email, encryptedPassword)
-
-  return SignUpSuccess
+  var result = db.createUser(form.email, encryptedPassword)
+  return when (result) {
+    is EmailAlreadyTaken ->
+      return SignUpFailure(SignUpErrors().setEmail(
+          "has already been taken"))
+    is UserCreated ->
+      SignUpSuccess
+  }
 }
-
-public data class SignUpForm(
-    val email: String,
-    val password: String,
-    val passwordConfirmation: String
-) {}
