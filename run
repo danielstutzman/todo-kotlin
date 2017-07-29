@@ -1,0 +1,5 @@
+#!/bin/bash -ex
+./fastbuild
+java \
+  -cp $(cat .mvn-classpath):target/classes \
+  WebServerKt
