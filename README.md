@@ -1,6 +1,6 @@
 # How to run web server
 
-`mvn compile && java -cp $(cat .mvn-classpath):target/classes HelloKt`
+`mvn compile && java -cp $(cat .mvn-classpath):target/classes WebServerKt`
 
 (Optionally, run `./fastbuild` instead of `mvn compile` or `mvn test-compile`)
 
