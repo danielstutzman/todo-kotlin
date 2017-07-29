@@ -1,4 +1,4 @@
-@args (RockerBody content)
+@args (String currentPath, String alert, RockerBody content)
 
 <!DOCTYPE html>
 <html>
@@ -98,30 +98,30 @@
     </div>
     <div class='row-fluid'>
       <div class='span4 offset4'>
-        {{ range .Alerts }}
-          <div class="alert flash">{{ .Text }}</div>
-        {{ end }}
-
-        {{ range .Flashes }}
-          <div class="alert flash">{{ .Text }}</div>
-        {{ end }}
+        @if (alert != null) {
+          <div class="alert flash">@alert</div>
+        }
 
         @content
 
-        {{ if eq .CurrentPath "/users/sign_in" "/users/sign_up" "/users" }}
-          {{ if not (eq .CurrentPath "/users/sign_in") }}
+        @if (currentPath.equals("/users/sign_in") ||
+             currentPath.equals("/users/sign_up") ||
+             currentPath.equals("/users")) {
+          @if (!currentPath.equals("/users/sign_in")) {
             <a href="/users/sign_in">Sign in</a>
             <br>
-          {{ end }}
-          {{ if not (eq .CurrentPath "/users/sign_up" "/users") }}
+          }
+          @if (!currentPath.equals("/users/sign_up") &&
+               !currentPath.equals("/users")) {
             <a href="/users/sign_up">Sign up</a>
             <br>
-          {{ end }}
-          {{ if not (eq .CurrentPath "/users/sign_up" "/users") }}
+          }
+          @if (!currentPath.equals("/users/sign_up") &&
+               !currentPath.equals("/users")) {
             <a href="/users/password/new">Forgot your password?</a>
             <br>
-          {{ end }}
-        {{ end }}
+          }
+        }
 
         <a href="/users/confirmation/new">Didn&#39;t receive confirmation instructions?</a>
         <br>

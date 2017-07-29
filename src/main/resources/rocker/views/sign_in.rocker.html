@@ -1,8 +1,7 @@
-@args (SignInForm form)
+@args (String currentUrl, String alert, SignInForm form)
 
-@views.devise_layout.template() -> {
+@views.devise_layout.template(currentUrl, alert) -> {
   <h2>Sign in</h2>
-  @form
   <form accept-charset="UTF-8" action="/users/sign_in" class="simple_form new_user" id="new_user" method="post">
     <div style="margin:0;padding:0;display:inline">
       <input name="utf8" type="hidden" value="✓">
@@ -11,7 +10,7 @@
     <div class='form-inputs'>
       <div class="input email optional user_email">
         <label class="email optional" for="user_email">Email</label>
-        <input autofocus="autofocus" class="string email optional" id="user_email" maxlength="255" name="user[email]" size="255" type="email" value="{{ .FormValues.Email }}" />
+        <input autofocus="autofocus" class="string email optional" id="user_email" maxlength="255" name="user[email]" size="255" type="email" value="@form.email" />
       </div>
       <div class="input password optional user_password">
         <label class="password optional" for="user_password">Password</label>

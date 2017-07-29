@@ -110,7 +110,7 @@ fun main(args: Array<String>) {
 
     service.get("/users/sign_in") { req, res ->
       val form = SignInForm("", "")
-      views.sign_in.template(form).render().toString()
+      views.sign_in.template(req.pathInfo(), null, form).render().toString()
     }
 
     service.post("/users/sign_in") { req, res ->
@@ -123,10 +123,7 @@ fun main(args: Array<String>) {
           res.redirect("/done")
         }
         is SignInFailure -> {
-//          val model = "MESSAGE" //HashMap<String, Any>()
-//          RockerEngine().render(ModelAndView(
-//              model, "views/sign_in.rocker.html"))
-          views.sign_in.template(form).render().toString()
+          views.sign_in.template(req.pathInfo(), output.alert, form).render().toString()
         }
       }
     }
