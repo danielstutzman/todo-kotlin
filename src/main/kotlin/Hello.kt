@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
   val conn = DriverManager.getConnection(jdbcUrl, creds.username, creds.password)
   val db = Db(conn)
 
-  val app = App(db)
+  val app = App(db, appPkg.SecurePasswordHasher(12))
 
   println("Starting server on 8080...")
   Service.ignite().port(8080).let { service ->

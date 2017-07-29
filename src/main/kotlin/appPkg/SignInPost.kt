@@ -12,7 +12,7 @@ fun App.handleUsersSignInPost(form: SignInForm): UsersSignInPostOutput {
     return SignInFailure("Invalid email or password.")
   }
 
-  if (form.password != user.encryptedPassword) {
+  if (this.passwordHasher.matches(form.password, user.encryptedPassword)) {
     return SignInFailure("Invalid email or password.")
   }
 

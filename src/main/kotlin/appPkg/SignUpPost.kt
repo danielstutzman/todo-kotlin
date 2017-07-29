@@ -23,7 +23,7 @@ fun App.handleUsersSignUpPost(form: SignUpForm): UsersSignUpPostOutput {
         "is too short (minimum is ${MIN_PASSWORD_LENGTH} characters)"))
   }
 
-  val encryptedPassword = "hash"
+  val encryptedPassword = this.passwordHasher.hash(form.password)
 
   var result = db.createUser(form.email, encryptedPassword)
   return when (result) {
