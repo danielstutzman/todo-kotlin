@@ -34,11 +34,11 @@ fun main(args: Array<String>) {
       service.staticFiles.externalLocation(projectDir + staticDir)
     }
 
-    service.get("/") { req, res ->
+    service.get("/") { _, res ->
       res.redirect("/users/sign_in")
     }
 
-    service.get("/users/sign_in") { req, res ->
+    service.get("/users/sign_in") { req, _ ->
       val form = SignInForm("", "")
       views.sign_in.template(req.pathInfo(), null, form).render().toString()
     }
@@ -56,7 +56,7 @@ fun main(args: Array<String>) {
       }
     }
 
-    service.get("/users/sign_up") { req, res ->
+    service.get("/users/sign_up") { req, _ ->
       val form = SignUpForm("", "", "")
       views.sign_up.template(req.pathInfo(), null, form, SignUpErrors()).render().toString()
     }

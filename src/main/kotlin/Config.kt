@@ -34,14 +34,11 @@ data class Config(
 )
 
 data class ConfigNulls(
-    val port: Integer,
+    val port: Int?,
     val postgresCredentials: PostgresCredentialsNulls?
 ) {
   fun toConfig() = Config(
-      if (port != null)
-        port.toInt()
-      else
-        throw RuntimeException("Missing port"),
+      port ?: throw RuntimeException("Missing port"),
       if (postgresCredentials != null)
         postgresCredentials.toPostgresCredentials()
       else
