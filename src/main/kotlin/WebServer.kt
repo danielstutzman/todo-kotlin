@@ -1,5 +1,5 @@
 import app.*
-import dbPkg.Db
+import db.Db
 import spark.Service
 import views.SignInForm
 import views.SignUpErrors

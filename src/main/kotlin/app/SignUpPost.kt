@@ -1,7 +1,7 @@
 package app
 
-import dbPkg.EmailAlreadyTaken
-import dbPkg.UserCreated
+import db.EmailAlreadyTaken
+import db.UserCreated
 import views.SignUpErrors
 import views.SignUpForm
 

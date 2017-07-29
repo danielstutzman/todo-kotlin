@@ -1,6 +1,6 @@
 package app
 
-import dbPkg.Db
+import db.Db
 
 class App(
     val db: Db,

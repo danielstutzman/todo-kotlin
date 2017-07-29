@@ -1,4 +1,4 @@
-package dbPkg
+package db
 
 import org.jooq.SQLDialect
 import org.jooq.generated.tables.Users.USERS
