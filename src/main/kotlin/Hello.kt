@@ -21,8 +21,8 @@ fun main(args: Array<String>) {
       appPkg.SecurePasswordHasher(12),
       appPkg.SecureTokenGenerator(16))
 
-  println("Starting server on 8080...")
-  Service.ignite().port(8080).let { service ->
+  println("Starting server on ${config.port}...")
+  Service.ignite().port(config.port).let { service ->
     service.initExceptionHandler { e ->
       e.printStackTrace()
     }

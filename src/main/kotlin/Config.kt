@@ -10,6 +10,7 @@ data class PostgresCredentials(
 )
 
 data class Config(
+    val port: Int,
     val postgresCredentials: PostgresCredentials
 )
 
@@ -20,6 +21,9 @@ data class Config(
 
 fun parseConfigJson(json: String): Config {
   val config: Config = Gson().fromJson(json, Config::class.java)
+  if (config.port == 0) {
+    throw RuntimeException("Missing port")
+  }
   if (config.postgresCredentials == null) {
     throw RuntimeException("Missing postgresCredentials")
   }
