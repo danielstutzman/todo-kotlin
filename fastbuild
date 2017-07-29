@@ -22,7 +22,8 @@ for HTML in `find src/main/resources/rocker/views -name "*.rocker.html"`; do
   if [[ $HTML -nt $CLASS ]]; then RECOMPILE_VIEWS=1; fi
 done
 
-if [ ! -e .mvn-classpath ]; then
+if [ pom.xml -nt .mvn-classpath ]; then
+  rm -f .mvn-classpath
   mvn dependency:build-classpath -Dmdep.outputFile=.mvn-classpath
 fi
 
