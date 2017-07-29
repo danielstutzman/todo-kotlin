@@ -35,6 +35,7 @@ if [ "$RECOMPILE_VIEWS" != "" ]; then
   time javac \
     -cp /Users/dan/.m2/repository/com/fizzed/rocker-runtime/0.20.0/rocker-runtime-0.20.0.jar \
     target/generated-sources/rocker/views/*.java \
+    src/main/java/views/*.java \
     -d target/classes
 fi
 

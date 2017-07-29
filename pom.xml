@@ -142,6 +142,10 @@
                     <goals> <goal>test-compile</goal> </goals>
                 </execution>
             </executions>
+
+            <configuration>
+              <sourceDirs>src/main/kotlin</sourceDirs>
+            </configuration>
         </plugin>
 
 
