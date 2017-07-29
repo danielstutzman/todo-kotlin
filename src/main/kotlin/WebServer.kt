@@ -1,4 +1,4 @@
-import appPkg.*
+import app.*
 import dbPkg.Db
 import spark.Service
 import views.SignInForm
@@ -18,8 +18,8 @@ fun main(args: Array<String>) {
   val db = Db(conn)
 
   val app = App(db,
-      appPkg.SecurePasswordHasher(12),
-      appPkg.SecureTokenGenerator(16))
+      app.SecurePasswordHasher(12),
+      app.SecureTokenGenerator(16))
 
   println("Starting server on ${config.port}...")
   Service.ignite().port(config.port).let { service ->

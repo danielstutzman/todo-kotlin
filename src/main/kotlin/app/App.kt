@@ -1,4 +1,4 @@
-package appPkg
+package app
 
 import dbPkg.Db
 
