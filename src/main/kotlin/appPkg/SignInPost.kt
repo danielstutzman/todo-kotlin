@@ -9,11 +9,11 @@ data class SignInFailure(val alert: String) : UsersSignInPostOutput()
 fun App.handleUsersSignInPost(form: SignInForm): UsersSignInPostOutput {
   var user = db.findUserByEmail(form.email)
   if (user == null) {
-    return SignInFailure("wrong email")
+    return SignInFailure("Invalid email or password.")
   }
 
   if (form.password != user.encryptedPassword) {
-    return SignInFailure("wrong password")
+    return SignInFailure("Invalid email or password.")
   }
 
   return SignInSuccess(user.id)
