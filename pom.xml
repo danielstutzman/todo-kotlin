@@ -12,7 +12,7 @@
 
   <properties>
     <kotlin.version>1.1.3</kotlin.version>
-    <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
+    <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
   </properties>
 
   <dependencies>
@@ -103,7 +103,7 @@
   </dependencies>
 
 	<build>
-    <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+    <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
     <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 			<plugins>
 					<plugin>
@@ -125,6 +125,7 @@
 							</executions>
 					</plugin>
 
+
         <plugin>
             <artifactId>kotlin-maven-plugin</artifactId>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -142,6 +143,7 @@
                 </execution>
             </executions>
         </plugin>
+
 
 				<plugin>
 						<groupId>org.flywaydb</groupId>

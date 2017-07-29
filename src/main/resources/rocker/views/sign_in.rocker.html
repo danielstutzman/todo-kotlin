@@ -1,7 +1,8 @@
-@args (String message)
+@args (SignInForm form)
 
 @views.devise_layout.template() -> {
   <h2>Sign in</h2>
+  @form
   <form accept-charset="UTF-8" action="/users/sign_in" class="simple_form new_user" id="new_user" method="post">
     <div style="margin:0;padding:0;display:inline">
       <input name="utf8" type="hidden" value="✓">

@@ -1,12 +1,9 @@
-import org.jooq.SQLDialect
-import org.jooq.generated.Tables.USERS
-import org.jooq.impl.DSL
-import spark.ModelAndView
+import appPkg.*
+import dbPkg.Db
 import spark.Service
+import views.SignInForm
 import java.io.File
 import java.sql.DriverManager
-import java.sql.Timestamp
-import java.util.*
 
 
 fun testDatabase(creds: PostgresCredentials) {
@@ -46,6 +43,7 @@ fun testDatabase(creds: PostgresCredentials) {
 
     System.setProperty("org.jooq.no-logo", "true")
 
+    /*
     DSL.using(conn, SQLDialect.POSTGRES_9_5).let { create ->
       create.delete(USERS)
           .where(USERS.EMAIL.eq("a1"))
@@ -73,6 +71,7 @@ fun testDatabase(creds: PostgresCredentials) {
         }
       }
     }
+    */
 
     conn.close()
   }
@@ -82,9 +81,17 @@ fun main(args: Array<String>) {
   val configJson = File("config/dev.json").readText()
   val config = parseConfigJson(configJson)
 
-  testDatabase(config.postgresCredentials)
+//  testDatabase(config.postgresCredentials)
 
-  println("Starting server on 8000...")
+  System.setProperty("org.jooq.no-logo", "true")
+  val creds = config.postgresCredentials
+  val jdbcUrl = "jdbc:postgresql://${creds.hostname}:${creds.port}/${creds.databaseName}"
+  val conn = DriverManager.getConnection(jdbcUrl, creds.username, creds.password)
+  val db = Db(conn)
+
+  val app = App(db)
+
+  println("Starting server on 8080...")
   Service.ignite().port(8080).let { service ->
     service.initExceptionHandler { e ->
       e.printStackTrace()
@@ -102,9 +109,40 @@ fun main(args: Array<String>) {
     }
 
     service.get("/users/sign_in") { req, res ->
-      val model = HashMap<String, Any>()
-      RockerEngine().render(ModelAndView(
-          model, "views/sign_in.rocker.html"))
+      val form = SignInForm("", "")
+      views.sign_in.template(form).render().toString()
+    }
+
+    service.post("/users/sign_in") { req, res ->
+      val form = SignInForm(
+          req.queryParams("user[email]"),
+          req.queryParams("user[password]"))
+      val output = app.handleUsersSignInPost(form)
+      when (output) {
+        is SignInSuccess -> {
+          res.redirect("/done")
+        }
+        is SignInFailure -> {
+//          val model = "MESSAGE" //HashMap<String, Any>()
+//          RockerEngine().render(ModelAndView(
+//              model, "views/sign_in.rocker.html"))
+          views.sign_in.template(form).render().toString()
+        }
+      }
+    }
+
+    service.post("/users/sign_up") { req, res ->
+      val form = SignUpForm(
+          req.params("user[email]"),
+          req.params("user[password]"),
+          req.params("user[passwordConfirmation]"))
+      val output = app.handleUsersSignUpPost(form)
+      if (output == SignUpSuccess) {
+        res.redirect("/done")
+      } else {
+        res.redirect("/done")
+      }
     }
   }
 }
+
