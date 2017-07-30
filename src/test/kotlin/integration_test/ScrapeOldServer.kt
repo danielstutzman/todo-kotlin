@@ -1,8 +1,12 @@
 package integration_test
 
 import db.Db
+import org.cyberneko.html.parsers.SAXParser
+import org.xml.sax.InputSource
 import webapp.PostgresCredentials
 import java.io.File
+import java.io.FileWriter
+import java.io.StringReader
 import java.net.URL
 import java.sql.DriverManager
 
@@ -51,7 +55,13 @@ fun saveScenario(name: String, body: String) {
     throw RuntimeException("Couldn't mkdirs ${SAVE_PATH}")
   }
   val outFile = File("${SAVE_PATH}/${name}.html")
-  outFile.writeText(body)
+  FileWriter(outFile).use { fileWriter ->
+    val parser = SAXParser()
+    parser.contentHandler = SAXWriteTagPerLine(fileWriter)
+    parser.parse(InputSource(StringReader(body)))
+  }
+
+
   println(outFile)
 }
 

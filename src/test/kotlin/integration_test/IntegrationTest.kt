@@ -54,30 +54,24 @@ fun testSignInSuccess(db: Db) {
 fun diffScenario(name: String, newBody: String) {
   val parser = SAXParser()
 
-  val oldFile = "src/test/resources/scraped/${name}.html"
-  val oldFileWriter = FileWriter(File("${name}.old.html"))
-  parser.contentHandler = SAXWriteTagPerLine(oldFileWriter)
-  parser.parse(InputSource(oldFile))
-  oldFileWriter.close()
+  val newFile = File("${name}.html")
+  FileWriter(newFile).use { fileWriter ->
+    parser.contentHandler = SAXWriteTagPerLine(fileWriter)
+    parser.parse(InputSource(StringReader(newBody)))
+  }
 
-  val newFileWriter = FileWriter(File("${name}.new.html"))
-  parser.contentHandler = SAXWriteTagPerLine(newFileWriter)
-  parser.parse(InputSource(StringReader(newBody)))
-  newFileWriter.close()
-
-  File("${name}.html").writeText(newBody)
-  ProcessBuilder(listOf(
+  val commandArgs = listOf(
       "/usr/bin/diff",
       "-u",
-      "${name}.old.html",
-      "${name}.new.html"))
+      "src/test/resources/scraped/${name}.html",
+      newFile.path)
+  ProcessBuilder(commandArgs)
       .redirectOutput(ProcessBuilder.Redirect.INHERIT)
       .redirectError(ProcessBuilder.Redirect.INHERIT)
       .start()
       .waitFor()
 
-  File("${name}.old.html").delete()
-  File("${name}.new.html").delete()
+  newFile.delete()
 }
 
 fun doFormPostNew(getPath: String, postPath: String, params: Map<String, String>): String {
