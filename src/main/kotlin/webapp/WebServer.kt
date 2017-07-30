@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
   startServer(config)
 }
 
-fun startServer(config: Config) {
+fun startServer(config: Config): Service {
   System.setProperty("org.jooq.no-logo", "true")
   val creds = config.postgresCredentials
   val jdbcUrl = "jdbc:postgresql://${creds.hostname}:${creds.port}/${creds.databaseName}"
@@ -33,58 +33,59 @@ fun startServer(config: Config) {
       app.SecureTokenGenerator(16))
 
   println("Starting server on ${config.port}...")
-  Service.ignite().port(config.port).let { service ->
-    service.initExceptionHandler { e ->
-      e.printStackTrace()
-    }
+  val service = Service.ignite().port(config.port)
 
-    if (true) { // if development mode
-      service.staticFiles.location("/public")
-      val projectDir = System.getProperty("user.dir")
-      val staticDir = "/src/main/resources/public"
-      service.staticFiles.externalLocation(projectDir + staticDir)
-    }
+  service.initExceptionHandler { e ->
+    e.printStackTrace()
+  }
 
-    service.get("/") { _, res ->
-      res.redirect("/users/sign_in")
-    }
+  if (true) { // if development mode
+    service.staticFiles.location("/public")
+    val projectDir = System.getProperty("user.dir")
+    val staticDir = "/src/main/resources/public"
+    service.staticFiles.externalLocation(projectDir + staticDir)
+  }
 
-    service.get("/users/sign_in") { req, _ ->
-      val form = SignInForm("", "")
-      views.sign_in.template(req.pathInfo(), null, form).render().toString()
-    }
+  service.get("/") { _, res ->
+    res.redirect("/users/sign_in")
+  }
 
-    service.post("/users/sign_in") { req, res ->
-      val form = SignInForm(
-          req.queryParams("user[email]")!!,
-          req.queryParams("user[password]")!!)
-      val output = app.handleUsersSignInPost(form)
-      when (output) {
-        is SignInFailure ->
-          views.sign_in.template(req.pathInfo(), output.alert, form).render().toString()
-        is SignInSuccess ->
-          res.redirect("/done")
-      }
-    }
+  service.get("/users/sign_in") { req, _ ->
+    val form = SignInForm("", "")
+    views.sign_in.template(req.pathInfo(), null, form).render().toString()
+  }
 
-    service.get("/users/sign_up") { req, _ ->
-      val form = SignUpForm("", "", "")
-      views.sign_up.template(req.pathInfo(), null, form, SignUpErrors()).render().toString()
-    }
-
-    service.post("/users") { req, res ->
-      val form = SignUpForm(
-          req.queryParams("user[email]")!!,
-          req.queryParams("user[password]")!!,
-          req.queryParams("user[password_confirmation]")!!)
-      val output = app.handleUsersSignUpPost(form)
-      when (output) {
-        is SignUpFailure ->
-          views.sign_up.template(req.pathInfo(), null, form, output.errors).render().toString()
-        is SignUpSuccess ->
-          res.redirect("/")
-      }
+  service.post("/users/sign_in") { req, res ->
+    val form = SignInForm(
+        req.queryParams("user[email]")!!,
+        req.queryParams("user[password]")!!)
+    val output = app.handleUsersSignInPost(form)
+    when (output) {
+      is SignInFailure ->
+        views.sign_in.template(req.pathInfo(), output.alert, form).render().toString()
+      is SignInSuccess ->
+        res.redirect("/done")
     }
   }
-}
 
+  service.get("/users/sign_up") { req, _ ->
+    val form = SignUpForm("", "", "")
+    views.sign_up.template(req.pathInfo(), null, form, SignUpErrors()).render().toString()
+  }
+
+  service.post("/users") { req, res ->
+    val form = SignUpForm(
+        req.queryParams("user[email]")!!,
+        req.queryParams("user[password]")!!,
+        req.queryParams("user[password_confirmation]")!!)
+    val output = app.handleUsersSignUpPost(form)
+    when (output) {
+      is SignUpFailure ->
+        views.sign_up.template(req.pathInfo(), null, form, output.errors).render().toString()
+      is SignUpSuccess ->
+        res.redirect("/")
+    }
+  }
+
+  return service
+}

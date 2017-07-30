@@ -1,6 +1,7 @@
 package integration_test
 
 import db.Db
+import webapp.PostgresCredentials
 import java.io.File
 import java.net.URL
 import java.sql.DriverManager

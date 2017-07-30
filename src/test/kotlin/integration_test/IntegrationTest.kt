@@ -1,9 +1,14 @@
 package integration_test
 
 import db.Db
+import org.cyberneko.html.parsers.SAXParser
+import org.xml.sax.InputSource
 import webapp.Config
 import webapp.PostgresCredentials
 import webapp.startServer
+import java.io.File
+import java.io.FileWriter
+import java.io.StringReader
 import java.net.URL
 import java.sql.DriverManager
 
@@ -23,8 +28,12 @@ fun main(args: Array<String>) {
   val conn = DriverManager.getConnection(jdbcUrl, creds.username, creds.password)
   val db = db.Db(conn)
 
-  startServer(Config(3001, creds))
+  val service = startServer(Config(3001, creds))
+  service.awaitInitialization()
+
   testSignInSuccess(db)
+
+  service.stop()
 }
 
 fun testSignInSuccess(db: Db) {
@@ -35,16 +44,45 @@ fun testSignInSuccess(db: Db) {
   )
 
   db.deleteUsers()
- val signUpSuccessBody = doFormPostNew("/users/sign_up", "/users", params + mapOf(
+  val signUpSuccessBody = doFormPostNew("/users/sign_up", "/users", params + mapOf(
       "user[password]" to "password",
       "user[password_confirmation]" to "password"
   ))
-  println(signUpSuccessBody)
+  diffScenario("sign_up_success", signUpSuccessBody)
+}
+
+fun diffScenario(name: String, newBody: String) {
+  val parser = SAXParser()
+
+  val oldFile = "src/test/resources/scraped/${name}.html"
+  val oldFileWriter = FileWriter(File("${name}.old.html"))
+  parser.contentHandler = SAXWriteTagPerLine(oldFileWriter)
+  parser.parse(InputSource(oldFile))
+  oldFileWriter.close()
+
+  val newFileWriter = FileWriter(File("${name}.new.html"))
+  parser.contentHandler = SAXWriteTagPerLine(newFileWriter)
+  parser.parse(InputSource(StringReader(newBody)))
+  newFileWriter.close()
+
+  File("${name}.html").writeText(newBody)
+  ProcessBuilder(listOf(
+      "/usr/bin/diff",
+      "-u",
+      "${name}.old.html",
+      "${name}.new.html"))
+      .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+      .redirectError(ProcessBuilder.Redirect.INHERIT)
+      .start()
+      .waitFor()
+
+  File("${name}.old.html").delete()
+  File("${name}.new.html").delete()
 }
 
 fun doFormPostNew(getPath: String, postPath: String, params: Map<String, String>): String {
-  val (cookies, authToken) =
-      getForCookiesAndAuthToken(URL(NEW_SERVER_URL + getPath))
-  val body = post(URL(NEW_SERVER_URL + postPath), params, cookies, authToken)
-  return body
+//  TODO("Get cookies and authToken from getPath")
+  val cookies = HashMap<String, String>()
+  val authToken = "123"
+  return post(URL(NEW_SERVER_URL + postPath), params, cookies, authToken)
 }
