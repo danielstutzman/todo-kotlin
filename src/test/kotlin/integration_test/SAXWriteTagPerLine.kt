@@ -9,11 +9,22 @@ public class SAXWriteTagPerLine(val writer: Writer) : DefaultHandler() {
                             localName: String,
                             qName: String,
                             atts: Attributes) {
-    val tag = localName!!.toLowerCase()
-    writer.write("<${tag}") // e.g. <input
+    val attrMap = LinkedHashMap<String, String>() // preserve order
     for (i in 0..atts.length - 1) {
       val name = atts.getLocalName(i)
       val value = atts.getValue(i)
+      attrMap[name] = value
+    }
+
+    val tag = localName!!.toLowerCase()
+    if (tag == "meta" && attrMap["name"] == "csrf-token") {
+      attrMap["content"] = "MASKED"
+    } else if (tag == "input" && attrMap["name"] == "authenticity_token") {
+      attrMap["value"] = "MASKED"
+    }
+
+    writer.write("<${tag}")
+    for ((name, value) in attrMap) {
       writer.write(" ${name}=${value}")
     }
     writer.write(">\n")
