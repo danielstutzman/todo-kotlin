@@ -74,7 +74,9 @@ fun getForCookiesAndAuthToken(url: URL): Pair<Map<String, String>, String> {
 }
 
 /** @return body of POST (might follow redirect) */
-fun post(url: URL, cookies: Map<String, String>, authToken: String): String {
+fun post(url: URL, params: Map<String, String>,
+         cookies: Map<String, String>, authToken: String): String {
+
   val http = url.openConnection() as HttpURLConnection
   http.requestMethod = "POST"
   http.doOutput = true
@@ -85,11 +87,8 @@ fun post(url: URL, cookies: Map<String, String>, authToken: String): String {
   http.connect()
 
   http.outputStream.use { outStream ->
-    val params = HashMap<String, String>()
-    params.put("user[email]", "a@a.com")
-    params.put("user[password]", "password")
-    params.put("authenticity_token", authToken)
-    outStream.write(urlEncodeParams(params).toByteArray())
+    val newParams = params + mapOf("authenticity_token" to authToken)
+    outStream.write(urlEncodeParams(newParams).toByteArray())
   }
 
   // Have to manually follow redirect; otherwise cookies don't get resent

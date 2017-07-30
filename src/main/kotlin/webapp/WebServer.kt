@@ -1,4 +1,12 @@
-import app.*
+package webapp
+
+import app.App
+import app.SignInFailure
+import app.SignInSuccess
+import app.SignUpFailure
+import app.SignUpSuccess
+import app.handleUsersSignInPost
+import app.handleUsersSignUpPost
 import db.Db
 import spark.Service
 import views.SignInForm
@@ -10,7 +18,10 @@ import java.sql.DriverManager
 fun main(args: Array<String>) {
   val configJson = File("config/dev.json").readText()
   val config = parseConfigJson(configJson)
+  startServer(config)
+}
 
+fun startServer(config: Config) {
   System.setProperty("org.jooq.no-logo", "true")
   val creds = config.postgresCredentials
   val jdbcUrl = "jdbc:postgresql://${creds.hostname}:${creds.port}/${creds.databaseName}"

@@ -1,6 +1,6 @@
+package integration_test
+
 import db.Db
-import integration_test.getForCookiesAndAuthToken
-import integration_test.post
 import java.io.File
 import java.net.URL
 import java.sql.DriverManager
@@ -31,26 +31,33 @@ fun main(args: Array<String>) {
   )
 
   db.deleteUsers()
-  scrapeFormPost("sign_up_success", "/users/sign_up", "/users", params + mapOf(
-      "user[password]" to "password",
-      "user[password_confirmation]" to "password"
-  ))
+  saveScenario("sign_up_success",
+      doFormPost("/users/sign_up", "/users", params + mapOf(
+          "user[password]" to "password",
+          "user[password_confirmation]" to "password"
+      )))
   val savedUser = db.findUserByEmail(EMAIL1)!!
-  scrapeFormPost("sign_up_exists", "/users/sign_up", "/users", params + mapOf(
-      "user[password]" to "password",
-      "user[password_confirmation]" to "password"
-  ))
+
+  saveScenario("sign_up_exists",
+      doFormPost("/users/sign_up", "/users", params + mapOf(
+          "user[password]" to "password",
+          "user[password_confirmation]" to "password"
+      )))
 }
 
-fun scrapeFormPost(scenarioName: String, getPath: String, postPath: String, params: Map<String, String>) {
-  val (cookies, authToken) =
-      getForCookiesAndAuthToken(URL(OLD_SERVER_URL + getPath))
-  val body = post(URL(OLD_SERVER_URL + postPath), cookies, authToken)
-
+fun saveScenario(name: String, body: String) {
   if (!File(SAVE_PATH).exists() && !File(SAVE_PATH).mkdirs()) {
     throw RuntimeException("Couldn't mkdirs ${SAVE_PATH}")
   }
-  val outFile = File("${SAVE_PATH}/${scenarioName}.html")
+  val outFile = File("${SAVE_PATH}/${name}.html")
   outFile.writeText(body)
   println(outFile)
+}
+
+
+fun doFormPost(getPath: String, postPath: String, params: Map<String, String>): String {
+  val (cookies, authToken) =
+      getForCookiesAndAuthToken(URL(OLD_SERVER_URL + getPath))
+  val body = post(URL(OLD_SERVER_URL + postPath), params, cookies, authToken)
+  return body
 }
