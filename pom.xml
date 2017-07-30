@@ -1,315 +1,323 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.danstutzman</groupId>
-  <artifactId>todo-kotlin</artifactId>
-  <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
-  <name>Maven Quick Start Archetype</name>
-  <url>http://maven.apache.org</url>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.danstutzman</groupId>
+    <artifactId>todo-kotlin</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>Maven Quick Start Archetype</name>
+    <url>http://maven.apache.org</url>
 
-  <properties>
-    <kotlin.version>1.1.3</kotlin.version>
-    <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
-  </properties>
+    <properties>
+        <kotlin.version>1.1.3</kotlin.version>
+        <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
+    </properties>
 
-  <dependencies>
+    <dependencies>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
 
-		<dependency>
-				<groupId>com.fizzed</groupId>
-				<artifactId>rocker-runtime</artifactId>
-				<version>0.20.0</version>
-		</dependency>
+        <dependency>
+            <groupId>com.fizzed</groupId>
+            <artifactId>rocker-runtime</artifactId>
+            <version>0.20.0</version>
+        </dependency>
 
-		<!-- for hot-reloading support only during development -->
-		<dependency>
-				<groupId>com.fizzed</groupId>
-				<artifactId>rocker-compiler</artifactId>
-				<version>0.20.0</version>
-				<scope>provided</scope>
-		</dependency>
+        <!-- for hot-reloading support only during development -->
+        <dependency>
+            <groupId>com.fizzed</groupId>
+            <artifactId>rocker-compiler</artifactId>
+            <version>0.20.0</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-        <groupId>org.jetbrains.kotlin</groupId>
-        <artifactId>kotlin-stdlib</artifactId>
-        <version>${kotlin.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>org.jetbrains.kotlin</groupId>
-        <artifactId>kotlin-test</artifactId>
-        <version>${kotlin.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>1.6.4</version>
-    </dependency>
-
-    <dependency>
-      <groupId>nekohtml</groupId>
-      <artifactId>nekohtml</artifactId>
-      <version>1.9.6.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>42.1.3</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.8.1</version>
-    </dependency>
-
-		<dependency>
-			<groupId>org.jooq</groupId>
-			<artifactId>jooq</artifactId>
-			<version>3.9.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jooq</groupId>
-			<artifactId>jooq-meta</artifactId>
-			<version>3.9.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jooq</groupId>
-			<artifactId>jooq-codegen</artifactId>
-			<version>3.9.4</version>
-		</dependency>
-
-		<dependency>
-				<groupId>com.sparkjava</groupId>
-				<artifactId>spark-kotlin</artifactId>
-				<version>1.0.0-alpha</version>
-		</dependency>
-
-    <dependency>
-			<groupId>org.mindrot</groupId>
-			<artifactId>jbcrypt</artifactId>
-			<version>0.4</version>
-    </dependency>
-
-  </dependencies>
-
-	<build>
-<!--
-    <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
-    <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
--->
-			<plugins>
-					<plugin>
-							<groupId>com.fizzed</groupId>
-							<artifactId>rocker-maven-plugin</artifactId>
-							<version>0.20.0</version>
-              <configuration>
-                <javaVersion>1.6</javaVersion>
-                <templateDirectory>${project.basedir}/src/main/resources/rocker</templateDirectory>
-              </configuration>
-							<executions>
-									<execution>
-											<id>generate-rocker-templates</id>
-											<phase>generate-sources</phase>
-											<goals>
-													<goal>generate</goal>
-											</goals>
-									</execution>
-							</executions>
-					</plugin>
-
-
-        <plugin>
-            <artifactId>kotlin-maven-plugin</artifactId>
+        <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
 
-            <executions>
-                <execution>
-                    <id>compile</id>
-                    <goals> <goal>compile</goal> </goals>
-                </execution>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.4</version>
+        </dependency>
 
-                <execution>
-                    <id>test-compile</id>
-                    <goals> <goal>test-compile</goal> </goals>
-                </execution>
-            </executions>
+        <dependency>
+            <groupId>nekohtml</groupId>
+            <artifactId>nekohtml</artifactId>
+            <version>1.9.6.2</version>
+        </dependency>
 
-            <configuration>
-              <sourceDirs>
-                <sourceDir>src/main/java</sourceDir>
-                <sourceDir>src/main/kotlin</sourceDir>
-                <sourceDir>target/generated-sources/jooq</sourceDir>
-                <sourceDir>target/generated-sources/rocker</sourceDir>
-              </sourceDirs>
-            </configuration>
-        </plugin>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.1.3</version>
+        </dependency>
 
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.5.1</version>
-            <executions>
-                <!-- Replacing default-compile as it is treated specially by maven -->
-                <execution>
-                    <id>default-compile</id>
-                    <phase>none</phase>
-                </execution>
-                <!-- Replacing default-testCompile as it is treated specially by maven -->
-                <execution>
-                    <id>default-testCompile</id>
-                    <phase>none</phase>
-                </execution>
-                <execution>
-                    <id>java-compile</id>
-                    <phase>compile</phase>
-                    <goals> <goal>compile</goal> </goals>
-                </execution>
-                <execution>
-                    <id>java-test-compile</id>
-                    <phase>test-compile</phase>
-                    <goals> <goal>testCompile</goal> </goals>
-                </execution>
-            </executions>
-        </plugin>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.1</version>
+        </dependency>
 
-				<plugin>
-						<groupId>org.flywaydb</groupId>
-						<artifactId>flyway-maven-plugin</artifactId>
-						<version>4.2.0</version>
-						<configuration>
-								<url>jdbc:postgresql://localhost:5432/todo-kotlin</url>
-								<user>dan</user>
-						</configuration>
-						<dependencies>
-								<dependency>
-                  <groupId>org.postgresql</groupId>
-                  <artifactId>postgresql</artifactId>
-                  <version>42.1.3</version>
-								</dependency>
-						</dependencies>
-				</plugin>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>3.9.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-meta</artifactId>
+            <version>3.9.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen</artifactId>
+            <version>3.9.4</version>
+        </dependency>
 
-				<plugin>
-					<groupId>org.jooq</groupId>
-					<artifactId>jooq-codegen-maven</artifactId>
-					<version>3.9.4</version>
+        <dependency>
+            <groupId>com.sparkjava</groupId>
+            <artifactId>spark-kotlin</artifactId>
+            <version>1.0.0-alpha</version>
+        </dependency>
 
-					<executions>
-						<execution>
-							<goals>
-								<goal>generate</goal>
-							</goals>
-						</execution>
-					</executions>
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
+        </dependency>
 
-					<dependencies>
-						<dependency>
-							<groupId>org.postgresql</groupId>
-							<artifactId>postgresql</artifactId>
-							<version>42.1.3</version>
-						</dependency>
-					</dependencies>
+    </dependencies>
 
-					<configuration>
-						<jdbc>
-							<driver>org.postgresql.Driver</driver>
-							<url>jdbc:postgresql://localhost:5432/todo-kotlin</url>
-							<user>dan</user>
-							<password></password>
-						</jdbc>
-						<generator>
-							<database>
-								<name>org.jooq.util.postgres.PostgresDatabase</name>
-								<includes>.*</includes>
-								<excludes></excludes>
-								<inputSchema>public</inputSchema>
-							</database>
-              <generate>
-                <!-- Primary key / foreign key relations should be generated and used.
-                     This is a prerequisite for various advanced features.
-                     Defaults to true -->
-                <relations>false</relations>
+    <build>
+        <!--
+            <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+            <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+        -->
+        <plugins>
+            <plugin>
+                <groupId>com.fizzed</groupId>
+                <artifactId>rocker-maven-plugin</artifactId>
+                <version>0.20.0</version>
+                <configuration>
+                    <javaVersion>1.6</javaVersion>
+                    <templateDirectory>${project.basedir}/src/main/resources/rocker</templateDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate-rocker-templates</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-                <!-- Generate navigation methods to navigate foreign key relationships
-                     directly from Record classes. This is only relevant if relations
-                     is set to true, too.
-                     Defaults to true -->
-                <!-- <navigationMethods>false</navigationMethods> -->
 
-                <!-- Generate deprecated code for backwards compatibility
-                     Defaults to true -->
-                <deprecated>false</deprecated>
+            <plugin>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <version>${kotlin.version}</version>
 
-                <!-- Generate instance fields in your tables, as opposed to static
-                     fields. This simplifies aliasing.
-                     Defaults to true -->
-                <instanceFields>true</instanceFields>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
 
-                <!-- Generate the javax.annotation.Generated annotation to indicate
-                     jOOQ version used for source code.
-                     Defaults to true -->
-                <generatedAnnotation>true</generatedAnnotation>
+                    <execution>
+                        <id>test-compile</id>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
 
-                <!-- Generate jOOQ Record classes for type-safe querying. You can
-                     turn this off, if you don't need "active records" for CRUD
-                     Defaults to true -->
-                <records>false</records>
+                <configuration>
+                    <sourceDirs>
+                        <sourceDir>src/main/java</sourceDir>
+                        <sourceDir>src/main/kotlin</sourceDir>
+                        <sourceDir>target/generated-sources/jooq</sourceDir>
+                        <sourceDir>target/generated-sources/rocker</sourceDir>
+                    </sourceDirs>
+                </configuration>
+            </plugin>
 
-                <!-- Generate POJOs in addition to Record classes for usage of the
-                     ResultQuery.fetchInto(Class) API
-                     Defaults to false -->
-                <pojos>false</pojos>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <!-- Replacing default-compile as it is treated specially by maven -->
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <!-- Replacing default-testCompile as it is treated specially by maven -->
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>java-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>java-test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-                <!-- Generate immutable POJOs for usage of the ResultQuery.fetchInto(Class) API
-                     This overrides any value set in <pojos/>
-                     Defaults to false -->
-                <immutablePojos>false</immutablePojos>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>4.2.0</version>
+                <configuration>
+                    <url>jdbc:postgresql://localhost:5432/todo-kotlin</url>
+                    <user>dan</user>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>42.1.3</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
 
-                <!-- Generate interfaces that will be implemented by records and/or pojos.
-                     You can also use these interfaces in Record.into(Class<?>) and similar
-                     methods, to let jOOQ return proxy objects for them.
-                     Defaults to false -->
-                <interfaces>false</interfaces>
+            <plugin>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+                <version>3.9.4</version>
 
-                <!-- Generate DAOs in addition to POJO classes
-                     Defaults to false -->
-                <daos>false</daos>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
 
-                <!-- Annotate POJOs and Records with JPA annotations for increased
-                     compatibility and better integration with JPA/Hibernate, etc
-                     Defaults to false -->
-                <jpaAnnotations>false</jpaAnnotations>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>42.1.3</version>
+                    </dependency>
+                </dependencies>
 
-                <!-- Annotate POJOs and Records with JSR-303 validation annotations
-                     Defaults to false -->
-                <validationAnnotations>false</validationAnnotations>
-              </generate>
-							<target>
-								<packageName>org.jooq.generated</packageName>
-								<directory>target/generated-sources/jooq</directory>
-							</target>
-						</generator>
-					</configuration>
-				</plugin>
+                <configuration>
+                    <jdbc>
+                        <driver>org.postgresql.Driver</driver>
+                        <url>jdbc:postgresql://localhost:5432/todo-kotlin</url>
+                        <user>dan</user>
+                        <password></password>
+                    </jdbc>
+                    <generator>
+                        <database>
+                            <name>org.jooq.util.postgres.PostgresDatabase</name>
+                            <includes>.*</includes>
+                            <excludes></excludes>
+                            <inputSchema>public</inputSchema>
+                        </database>
+                        <generate>
+                            <!-- Primary key / foreign key relations should be generated and used.
+                                 This is a prerequisite for various advanced features.
+                                 Defaults to true -->
+                            <relations>false</relations>
 
-			</plugins>
-	</build>
+                            <!-- Generate navigation methods to navigate foreign key relationships
+                                 directly from Record classes. This is only relevant if relations
+                                 is set to true, too.
+                                 Defaults to true -->
+                            <!-- <navigationMethods>false</navigationMethods> -->
+
+                            <!-- Generate deprecated code for backwards compatibility
+                                 Defaults to true -->
+                            <deprecated>false</deprecated>
+
+                            <!-- Generate instance fields in your tables, as opposed to static
+                                 fields. This simplifies aliasing.
+                                 Defaults to true -->
+                            <instanceFields>true</instanceFields>
+
+                            <!-- Generate the javax.annotation.Generated annotation to indicate
+                                 jOOQ version used for source code.
+                                 Defaults to true -->
+                            <generatedAnnotation>true</generatedAnnotation>
+
+                            <!-- Generate jOOQ Record classes for type-safe querying. You can
+                                 turn this off, if you don't need "active records" for CRUD
+                                 Defaults to true -->
+                            <records>false</records>
+
+                            <!-- Generate POJOs in addition to Record classes for usage of the
+                                 ResultQuery.fetchInto(Class) API
+                                 Defaults to false -->
+                            <pojos>false</pojos>
+
+                            <!-- Generate immutable POJOs for usage of the ResultQuery.fetchInto(Class) API
+                                 This overrides any value set in <pojos/>
+                                 Defaults to false -->
+                            <immutablePojos>false</immutablePojos>
+
+                            <!-- Generate interfaces that will be implemented by records and/or pojos.
+                                 You can also use these interfaces in Record.into(Class<?>) and similar
+                                 methods, to let jOOQ return proxy objects for them.
+                                 Defaults to false -->
+                            <interfaces>false</interfaces>
+
+                            <!-- Generate DAOs in addition to POJO classes
+                                 Defaults to false -->
+                            <daos>false</daos>
+
+                            <!-- Annotate POJOs and Records with JPA annotations for increased
+                                 compatibility and better integration with JPA/Hibernate, etc
+                                 Defaults to false -->
+                            <jpaAnnotations>false</jpaAnnotations>
+
+                            <!-- Annotate POJOs and Records with JSR-303 validation annotations
+                                 Defaults to false -->
+                            <validationAnnotations>false</validationAnnotations>
+                        </generate>
+                        <target>
+                            <packageName>org.jooq.generated</packageName>
+                            <directory>target/generated-sources/jooq</directory>
+                        </target>
+                    </generator>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 
 </project>
