@@ -24,14 +24,6 @@ class Db(private val conn: Connection) {
 
   private fun now() = Timestamp(System.currentTimeMillis().toLong())
 
-  fun findUserByEmail(emailAnyCase: String): User? {
-    return create
-        .select(USERS.ID, USERS.EMAIL, USERS.ENCRYPTED_PASSWORD, USERS.CREATED_AT, USERS.UPDATED_AT)
-        .from(USERS)
-        .where(USERS.EMAIL.eq(emailAnyCase.toLowerCase()))
-        .fetchOneInto(User::class.java)
-  }
-
   fun createUser(emailAnyCase: String, encryptedPassword: String): CreateUserResult {
     val email = emailAnyCase.toLowerCase()
 
@@ -59,4 +51,14 @@ class Db(private val conn: Connection) {
     }
     return UserCreated(user)
   }
+
+  fun findUserByEmail(emailAnyCase: String): User? {
+    return create
+        .select(USERS.ID, USERS.EMAIL, USERS.ENCRYPTED_PASSWORD, USERS.CREATED_AT, USERS.UPDATED_AT)
+        .from(USERS)
+        .where(USERS.EMAIL.eq(emailAnyCase.toLowerCase()))
+        .fetchOneInto(User::class.java)
+  }
+
+  fun deleteUsers() = create.delete(USERS).execute()
 }

@@ -1,7 +1,9 @@
-import org.xml.sax.helpers.DefaultHandler
-import org.xml.sax.Attributes
+package integration_test
 
-class SAXFindAuthenticityToken : DefaultHandler() {
+import org.xml.sax.Attributes
+import org.xml.sax.helpers.DefaultHandler
+
+public class SAXFindAuthenticityToken : DefaultHandler() {
   var foundToken: String? = null
 
   override fun startElement(namespaceURI: String,

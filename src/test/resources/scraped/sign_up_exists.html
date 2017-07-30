@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Todo</title>
+    <link href="/assets/application.css?body=1" media="all" rel="stylesheet" />
+    <link href="/assets/bootstrap-datepicker.css?body=1" media="all" rel="stylesheet" />
+    <link href="/assets/pages.css?body=1" media="all" rel="stylesheet" />
+    <script src="/assets/jquery.js?body=1"></script>
+    <script src="/assets/jquery_ujs.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/core.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.ar.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.bg.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.br.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.ca.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.cs.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.cy.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.da.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.de.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.el.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.es.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.et.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.fa.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.fi.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.fr.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.gl.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.he.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.hr.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.hu.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.id.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.is.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.it.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.ja.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.ka.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.kk.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.kr.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.lt.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.lv.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.mk.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.ms.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.nb.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.nl-BE.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.nl.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.no.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.pl.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.pt-BR.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.pt.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.ro.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.rs-latin.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.rs.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.ru.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.sk.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.sl.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.sq.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.sv.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.sw.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.th.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.tr.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.ua.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.uk.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.zh-TW.js?body=1"></script>
+    <script src="/assets/bootstrap-datepicker/index.js?body=1"></script>
+    <script src="/assets/bootstrap-transition.js?body=1"></script>
+    <script src="/assets/bootstrap-affix.js?body=1"></script>
+    <script src="/assets/bootstrap-alert.js?body=1"></script>
+    <script src="/assets/bootstrap-button.js?body=1"></script>
+    <script src="/assets/bootstrap-carousel.js?body=1"></script>
+    <script src="/assets/bootstrap-collapse.js?body=1"></script>
+    <script src="/assets/bootstrap-dropdown.js?body=1"></script>
+    <script src="/assets/bootstrap-modal.js?body=1"></script>
+    <script src="/assets/bootstrap-scrollspy.js?body=1"></script>
+    <script src="/assets/bootstrap-tab.js?body=1"></script>
+    <script src="/assets/bootstrap-tooltip.js?body=1"></script>
+    <script src="/assets/bootstrap-popover.js?body=1"></script>
+    <script src="/assets/bootstrap-typeahead.js?body=1"></script>
+    <script src="/assets/bootstrap.js?body=1"></script>
+    <script src="/assets/pages.js?body=1"></script>
+    <script src="/assets/application.js?body=1"></script>
+    <meta content="authenticity_token" name="csrf-param" />
+    <meta content="hMbI038qxlUT4yBcwinQ0wnU+9DTwaaGML3lXuDL+so=" name="csrf-token" />
+  </head>
+  <body>
+    <div class='row-fluid'>
+      <div class='span10 offset1'>
+        <div class='hero-unit text-center'>
+          <h1>
+            ToDo
+          </h1>
+          <p>
+            <a href='http://www.arubystory.com' target='_blank'>
+              Welcome to the ToDo application
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class='row-fluid'>
+      <div class='span4 offset4'>
+        
+        <h2>Sign up</h2>
+        <form accept-charset="UTF-8" action="/users" class="simple_form new_user" id="new_user" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="hMbI038qxlUT4yBcwinQ0wnU+9DTwaaGML3lXuDL+so=" /></div>  <p class="error_notification">Please review the problems below:</p>
+          <div class='form-inputs'>
+            <div class="input email required user_email field_with_errors"><label class="email required" for="user_email"><abbr title="required">*</abbr> Email</label><input aria-required="true" autofocus="autofocus" class="string email required" id="user_email" maxlength="255" name="user[email]" required="required" size="255" type="email" value="a@a.com" /><span class="error">has already been taken</span></div>
+            <div class="input password required user_password"><label class="password required" for="user_password"><abbr title="required">*</abbr> Password</label><input aria-required="true" class="password required" id="user_password" maxlength="128" name="user[password]" required="required" size="128" type="password" /></div>
+            <div class="input password required user_password_confirmation"><label class="password required" for="user_password_confirmation"><abbr title="required">*</abbr> Password confirmation</label><input aria-required="true" class="password required" id="user_password_confirmation" name="user[password_confirmation]" required="required" type="password" /></div>
+          </div>
+          <div class='form-actions'>
+            <input class="button btn btn-primary" name="commit" type="submit" value="Sign up" />
+          </div>
+        </form>
+        <a href="/users/sign_in">Sign in</a>
+        <br>
+        <a href="/users/confirmation/new">Didn&#39;t receive confirmation instructions?</a>
+        <br>
+      </div>
+    </div>
+    <div class='row-fluid'>
+      <div class='span10 offset1'>
+        <div class='alert footer alert-error'>
+          <p>
+            Visit
+            <a href='http://arubystory.blogspot.com'>
+              http://www.arubystory.com/p/tutorials.html
+            </a>
+            if you want to follow the tutorial in order to create this application with Ruby on Rails!
+          </p>
+          <p class='text-right'>
+            <strong>
+              Copyright 2013, <a href="http://twitter.com/lazaru_s" target="_blank">Lazarus Lazaridis</a>
+            </strong>
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
