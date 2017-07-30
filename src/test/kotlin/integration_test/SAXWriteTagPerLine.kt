@@ -30,6 +30,17 @@ public class SAXWriteTagPerLine(val writer: Writer) : DefaultHandler() {
     writer.write(">\n")
   }
 
+  override fun characters(ch: CharArray?, start: Int, length: Int) {
+    val s = ch!!
+        .joinToString("")
+        .substring(start, start + length)
+        .trim()
+    if (s != "") {
+      writer.write(s)
+      writer.write("\n")
+    }
+  }
+
   override fun endElement(uri: String?, localName: String?, qName: String?) {
     val tag = localName!!.toLowerCase()
     writer.write("</${tag}>\n")
