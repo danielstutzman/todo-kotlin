@@ -15,6 +15,7 @@ import views.SignInForm
 import views.SignUpErrors
 import views.SignUpForm
 
+const val SIGNED_UP_BUT_UNCONFIRMED = "A message with a confirmation link has been sent to your email address. Please open the link to activate your account."
 
 data class Webapp(val app: App) {
   val root = { _: Request, res: Response ->
@@ -28,7 +29,7 @@ data class Webapp(val app: App) {
     val newSession = updateSession(oldSession, res)
     views.sign_in.template(
         req.pathInfo(),
-        null,
+        newSession.flashNotice,
         newSession.csrfValue,
         form
     ).render().toString()
@@ -89,7 +90,10 @@ data class Webapp(val app: App) {
             output.errors
         ).render().toString()
       is SignUpSuccess -> {
-        updateSession(oldSession.setUserId(output.setUserId), res)
+        val newSession = oldSession
+            .setUserId(output.setUserId)
+            .setFlashNotice(SIGNED_UP_BUT_UNCONFIRMED)
+        updateSession(newSession, res)
         res.redirect("/")
       }
     }

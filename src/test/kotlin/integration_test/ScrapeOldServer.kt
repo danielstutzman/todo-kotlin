@@ -36,7 +36,7 @@ fun main(args: Array<String>) {
   )
 
   db.deleteUsers()
-  saveScenario("sign_up_success",
+  saveScenario("sign_up_needs_confirm",
       doFormPost("/users/sign_up", "/users", params + mapOf(
           "user[password]" to "password",
           "user[password_confirmation]" to "password"

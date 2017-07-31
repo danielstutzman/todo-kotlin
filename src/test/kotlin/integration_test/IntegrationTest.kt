@@ -31,12 +31,12 @@ fun main(args: Array<String>) {
   val service = startServer(Config(3001, creds))
   service.awaitInitialization()
 
-  testSignInSuccess(db)
+  testSignUpNeedsConfirm(db)
 
   service.stop()
 }
 
-fun testSignInSuccess(db: Db) {
+fun testSignUpNeedsConfirm(db: Db) {
   val params = mapOf(
       "utf8" to "\u2173",
       "user[email]" to EMAIL1,
@@ -44,11 +44,11 @@ fun testSignInSuccess(db: Db) {
   )
 
   db.deleteUsers()
-  val signUpSuccessBody = doFormPostNew("/users/sign_up", "/users", params + mapOf(
+  val body = doFormPostNew("/users/sign_up", "/users", params + mapOf(
       "user[password]" to "password",
       "user[password_confirmation]" to "password"
   ))
-  diffScenario("sign_up_success", signUpSuccessBody)
+  diffScenario("sign_up_needs_confirm", body)
 }
 
 fun diffScenario(name: String, newBody: String) {
@@ -75,8 +75,7 @@ fun diffScenario(name: String, newBody: String) {
 }
 
 fun doFormPostNew(getPath: String, postPath: String, params: Map<String, String>): String {
-//  TODO("Get cookies and authToken from getPath")
-  val cookies = HashMap<String, String>()
-  val authToken = "123"
+  val (cookies, authToken) =
+      getForCookiesAndAuthToken(URL(NEW_SERVER_URL + getPath))
   return post(URL(NEW_SERVER_URL + postPath), params, cookies, authToken)
 }

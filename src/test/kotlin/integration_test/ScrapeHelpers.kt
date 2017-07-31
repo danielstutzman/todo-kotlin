@@ -96,12 +96,8 @@ fun post(url: URL, params: Map<String, String>,
       http.responseCode == HttpURLConnection.HTTP_MOVED_PERM ||
       http.responseCode == HttpURLConnection.HTTP_SEE_OTHER) {
     val newUrl = URL(http.getHeaderField("Location"))
-    val newCookies =
-        if (cookies.isEmpty())
-          cookies
-        else
-          (cookies + extractCookiesFromSetCookieHeader(http))
-    return followRedirect(newUrl, newCookies)
+    return followRedirect(newUrl,
+        cookies + extractCookiesFromSetCookieHeader(http))
   } else {
     val body = http.inputStream.bufferedReader().use { it.readText() }
     return body
