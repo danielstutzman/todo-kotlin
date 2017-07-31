@@ -13,8 +13,8 @@
     }
 
     <div class='form-inputs'>
-      <div class="input email required user_email"
-        @if (errors.email != null) { field_with_errors }>
+      <div class="input email required user_email
+        @if (errors.email != null) { field_with_errors }">
         <label class="email required" for="user_email">
           <abbr title="required">*</abbr>
           Email
@@ -25,8 +25,8 @@
         }
       </div>
 
-      <div class="input password required user_password"
-        @if (errors.password != null) { field_with_errors }>
+      <div class="input password required user_password
+        @if (errors.password != null) { field_with_errors }">
         <label class="password required" for="user_password">
           <abbr title="required">*</abbr>
           Password
@@ -37,8 +37,8 @@
         }
       </div>
 
-      <div class="input password required user_password_confirmation"
-        @if (errors.passwordConfirmation != null) { field_with_errors }>
+      <div class="input password required user_password_confirmation
+        @if (errors.passwordConfirmation != null) { field_with_errors }">
         <label class="password required" for="user_password_confirmation">
           <abbr title="required">*</abbr>
           Password confirmation
