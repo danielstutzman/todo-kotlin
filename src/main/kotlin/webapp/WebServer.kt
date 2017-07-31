@@ -22,7 +22,7 @@ fun startServer(config: Config): Service {
   val app = App(db,
       app.SecurePasswordHasher(12),
       app.SecureTokenGenerator(16))
-  val webapp = Webapp(app)
+  val webapp = Webapp(app, SessionStorage("secret"))
 
   println("Starting server on ${config.port}...")
   val service = Service.ignite().port(config.port)

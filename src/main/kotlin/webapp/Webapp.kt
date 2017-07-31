@@ -7,26 +7,27 @@ import app.SignUpFailure
 import app.SignUpSuccess
 import app.handleUsersSignInPost
 import app.handleUsersSignUpPost
-import loadSessionAndCheckCsrf
 import spark.Request
 import spark.Response
-import updateSession
 import views.SignInForm
 import views.SignUpErrors
 import views.SignUpForm
 
 const val SIGNED_UP_BUT_UNCONFIRMED = "A message with a confirmation link has been sent to your email address. Please open the link to activate your account."
 
-data class Webapp(val app: App) {
+data class Webapp(
+    val app: App,
+    val sessionStorage: SessionStorage
+) {
   val root = { _: Request, res: Response ->
     res.redirect("/users/sign_in")
   }
 
   val usersSignInGet = { req: Request, res: Response ->
-    val oldSession = loadSessionAndCheckCsrf(req)
+    val oldSession = sessionStorage.loadSessionAndCheckCsrf(req)
     val form = SignInForm("", "")
 
-    val newSession = updateSession(oldSession, res)
+    val newSession = sessionStorage.updateSession(oldSession, res)
     views.sign_in.template(
         req.pathInfo(),
         newSession.flashNotice,
@@ -36,14 +37,14 @@ data class Webapp(val app: App) {
   }
 
   val usersSignInPost = { req: Request, res: Response ->
-    val oldSession = loadSessionAndCheckCsrf(req)
+    val oldSession = sessionStorage.loadSessionAndCheckCsrf(req)
     val form = SignInForm(
         req.queryParams("user[email]")!!,
         req.queryParams("user[password]")!!)
 
     val output = app.handleUsersSignInPost(form)
 
-    val newSession = updateSession(oldSession, res)
+    val newSession = sessionStorage.updateSession(oldSession, res)
     when (output) {
       is SignInFailure ->
         views.sign_in.template(
@@ -58,10 +59,10 @@ data class Webapp(val app: App) {
   }
 
   val usersSignUpGet = { req: Request, res: Response ->
-    val oldSession = loadSessionAndCheckCsrf(req)
+    val oldSession = sessionStorage.loadSessionAndCheckCsrf(req)
     val form = SignUpForm("", "", "")
 
-    val newSession = updateSession(oldSession, res)
+    val newSession = sessionStorage.updateSession(oldSession, res)
     views.sign_up.template(
         req.pathInfo(),
         null,
@@ -72,7 +73,7 @@ data class Webapp(val app: App) {
   }
 
   val usersSignUpPost = { req: Request, res: Response ->
-    val oldSession = loadSessionAndCheckCsrf(req)
+    val oldSession = sessionStorage.loadSessionAndCheckCsrf(req)
     val form = SignUpForm(
         req.queryParams("user[email]")!!,
         req.queryParams("user[password]")!!,
@@ -93,7 +94,7 @@ data class Webapp(val app: App) {
         val newSession = oldSession
             .setUserId(output.setUserId)
             .setFlashNotice(SIGNED_UP_BUT_UNCONFIRMED)
-        updateSession(newSession, res)
+        sessionStorage.updateSession(newSession, res)
         res.redirect("/")
       }
     }
