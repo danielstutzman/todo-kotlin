@@ -31,15 +31,18 @@ data class PostgresCredentialsNulls(
 
 
 data class Config(
+    val hashPasswords: Boolean,
     val port: Int,
     val postgresCredentials: PostgresCredentials
 )
 
 data class ConfigNulls(
+    val hashPasswords: Boolean?,
     val port: Int?,
     val postgresCredentials: PostgresCredentialsNulls?
 ) {
   fun toConfig() = Config(
+      hashPasswords ?: throw RuntimeException("Missing hashPasswords"),
       port ?: throw RuntimeException("Missing port"),
       if (postgresCredentials != null)
         postgresCredentials.toPostgresCredentials()

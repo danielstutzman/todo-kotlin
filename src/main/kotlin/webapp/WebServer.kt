@@ -1,6 +1,8 @@
 package webapp
 
 import app.App
+import app.FakePasswordHasher
+import app.SecurePasswordHasher
 import db.Db
 import spark.Service
 import java.io.File
@@ -18,9 +20,12 @@ fun startServer(config: Config): Service {
   val jdbcUrl = "jdbc:postgresql://${creds.hostname}:${creds.port}/${creds.databaseName}"
   val conn = DriverManager.getConnection(jdbcUrl, creds.username, creds.password)
   val db = Db(conn)
+  val passwordHasher =
+      if (config.hashPasswords) SecurePasswordHasher(31)
+      else FakePasswordHasher()
 
   val app = App(db,
-      app.SecurePasswordHasher(12),
+      passwordHasher,
       app.SecureTokenGenerator(16))
   val webapp = Webapp(app, SessionStorage("secret"))
 

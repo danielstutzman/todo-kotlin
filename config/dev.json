@@ -1,4 +1,5 @@
 {
+  "hashPasswords": true,
   "port": 8080,
   "postgresCredentials": {
     "hostname": "localhost",

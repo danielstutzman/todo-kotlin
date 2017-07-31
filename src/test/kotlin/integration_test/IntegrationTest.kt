@@ -24,7 +24,10 @@ fun main(args: Array<String>) {
   val conn = DriverManager.getConnection(jdbcUrl, creds.username, creds.password)
   val db = db.Db(conn)
 
-  val service = startServer(Config(3001, creds))
+  val service = startServer(Config(
+      false,
+      3001,
+      creds))
   service.awaitInitialization()
 
   runScenarios("http://localhost:3001", db, { scenarioName, htmlBody ->
