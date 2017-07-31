@@ -12,6 +12,7 @@ import spark.Response
 import views.SignInForm
 import views.SignUpErrors
 import views.SignUpForm
+import kotlin.system.measureTimeMillis
 
 const val SIGNED_UP_BUT_UNCONFIRMED = "A message with a confirmation link has been sent to your email address. Please open the link to activate your account."
 
@@ -98,5 +99,14 @@ data class Webapp(
         res.redirect("/")
       }
     }
+  }
+
+  private fun <T> bench2(name: String, toBench: () -> T): T {
+    var output: T? = null
+    var numMillis = measureTimeMillis {
+      output = toBench()
+    }
+    println("${name} took ${numMillis} ms")
+    return output!!
   }
 }

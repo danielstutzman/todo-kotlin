@@ -5,6 +5,7 @@ import org.jooq.generated.tables.Users.USERS
 import org.jooq.impl.DSL
 import java.sql.Connection
 import java.sql.Timestamp
+import kotlin.system.measureTimeMillis
 
 data class User(
     val id: Int,
@@ -61,4 +62,13 @@ class Db(private val conn: Connection) {
   }
 
   fun deleteUsers() = create.delete(USERS).execute()
+
+  private fun <T> bench2(name: String, toBench: () -> T): T {
+    var output: T? = null
+    var numMillis = measureTimeMillis {
+      output = toBench()
+    }
+    println("${name} took ${numMillis} ms")
+    return output!!
+  }
 }
