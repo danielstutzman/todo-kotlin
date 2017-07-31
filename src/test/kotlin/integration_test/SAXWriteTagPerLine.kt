@@ -25,7 +25,11 @@ public class SAXWriteTagPerLine(val writer: Writer) : DefaultHandler() {
 
     writer.write("<${tag}")
     for ((name, value) in attrMap) {
-      writer.write(" ${name}=${value}")
+      if (value.contains(' ')) {
+        writer.write(" ${name}='${value}'")
+      } else {
+        writer.write(" ${name}=${value}")
+      }
     }
     writer.write(">\n")
   }
