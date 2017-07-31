@@ -1,19 +1,8 @@
 package webapp
 
 import app.App
-import app.SignInFailure
-import app.SignInSuccess
-import app.SignUpFailure
-import app.SignUpSuccess
-import app.handleUsersSignInPost
-import app.handleUsersSignUpPost
 import db.Db
-import loadSessionAndCheckCsrf
 import spark.Service
-import updateSession
-import views.SignInForm
-import views.SignUpErrors
-import views.SignUpForm
 import java.io.File
 import java.sql.DriverManager
 
@@ -33,6 +22,7 @@ fun startServer(config: Config): Service {
   val app = App(db,
       app.SecurePasswordHasher(12),
       app.SecureTokenGenerator(16))
+  val webapp = Webapp(app)
 
   println("Starting server on ${config.port}...")
   val service = Service.ignite().port(config.port)
@@ -48,83 +38,12 @@ fun startServer(config: Config): Service {
     service.staticFiles.externalLocation(projectDir + staticDir)
   }
 
-  service.get("/") { _, res ->
-    res.redirect("/users/sign_in")
-  }
-
-  service.get("/users/sign_in") { req, res ->
-    val oldSession = loadSessionAndCheckCsrf(req)
-    val form = SignInForm("", "")
-
-    val newSession = updateSession(oldSession, res)
-    views.sign_in.template(
-        req.pathInfo(),
-        null,
-        newSession.csrfValue,
-        form
-    ).render().toString()
-  }
-
-  service.post("/users/sign_in") { req, res ->
-    val oldSession = loadSessionAndCheckCsrf(req)
-    val form = SignInForm(
-        req.queryParams("user[email]")!!,
-        req.queryParams("user[password]")!!)
-
-    val output = app.handleUsersSignInPost(form)
-
-    val newSession = updateSession(oldSession, res)
-    when (output) {
-      is SignInFailure ->
-        views.sign_in.template(
-            req.pathInfo(),
-            output.alert,
-            newSession.csrfValue,
-            form
-        ).render().toString()
-      is SignInSuccess ->
-        res.redirect("/done")
-    }
-  }
-
-  service.get("/users/sign_up") { req, res ->
-    val oldSession = loadSessionAndCheckCsrf(req)
-    val form = SignUpForm("", "", "")
-
-    val newSession = updateSession(oldSession, res)
-    views.sign_up.template(
-        req.pathInfo(),
-        null,
-        newSession.csrfValue,
-        form,
-        SignUpErrors()
-    ).render().toString()
-  }
-
-  service.post("/users") { req, res ->
-    val oldSession = loadSessionAndCheckCsrf(req)
-    val form = SignUpForm(
-        req.queryParams("user[email]")!!,
-        req.queryParams("user[password]")!!,
-        req.queryParams("user[password_confirmation]")!!)
-
-    val output = app.handleUsersSignUpPost(form)
-
-    when (output) {
-      is SignUpFailure ->
-        views.sign_up.template(
-            req.pathInfo(),
-            null,
-            oldSession.csrfValue,
-            form,
-            output.errors
-        ).render().toString()
-      is SignUpSuccess -> {
-        updateSession(oldSession.setUserId(output.setUserId), res)
-        res.redirect("/")
-      }
-    }
-  }
+  service.get("/", webapp.root)
+  service.get("/users/sign_in", webapp.usersSignInGet)
+  service.post("/users/sign_in", webapp.usersSignInPost)
+  service.get("/users/sign_up", webapp.usersSignUpGet)
+  service.post("/users", webapp.usersSignUpPost)
 
   return service
 }
+
