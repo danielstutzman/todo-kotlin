@@ -8,12 +8,16 @@ import app.SignUpSuccess
 import app.handleUsersSignInPost
 import app.handleUsersSignUpPost
 import db.Db
+import spark.Request
+import spark.Response
 import spark.Service
 import views.SignInForm
 import views.SignUpErrors
 import views.SignUpForm
 import java.io.File
 import java.sql.DriverManager
+
+const val COOKIE_NAME = "todo-kotlin"
 
 fun main(args: Array<String>) {
   val configJson = File("config/dev.json").readText()
@@ -82,10 +86,24 @@ fun startServer(config: Config): Service {
     when (output) {
       is SignUpFailure ->
         views.sign_up.template(req.pathInfo(), null, form, output.errors).render().toString()
-      is SignUpSuccess ->
+      is SignUpSuccess -> {
+        saveSession(Session(output.setUserId), res)
         res.redirect("/")
+      }
     }
   }
 
   return service
+}
+
+data class Session(val userId: Int?) {}
+
+fun loadSession(request: Request): Session {
+  val userIdString = request.cookie(COOKIE_NAME)
+  val userId = userIdString?.toInt()
+  return Session(userId)
+}
+
+fun saveSession(session: Session, response: Response) {
+  response.cookie(COOKIE_NAME, session.userId.toString())
 }

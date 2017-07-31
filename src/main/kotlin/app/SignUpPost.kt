@@ -10,7 +10,7 @@ val EMAIL_ALREADY_TAKEN_ERROR = "has already been taken"
 
 sealed class UsersSignUpPostOutput
 data class SignUpFailure(val errors: SignUpErrors) : UsersSignUpPostOutput()
-object SignUpSuccess : UsersSignUpPostOutput()
+data class SignUpSuccess(val setUserId: Int) : UsersSignUpPostOutput()
 
 fun App.handleUsersSignUpPost(form: SignUpForm): UsersSignUpPostOutput {
   if (form.passwordConfirmation != form.password) {
@@ -31,6 +31,6 @@ fun App.handleUsersSignUpPost(form: SignUpForm): UsersSignUpPostOutput {
       return SignUpFailure(SignUpErrors().setEmail(
           "has already been taken"))
     is UserCreated ->
-      SignUpSuccess
+      SignUpSuccess(result.user.id)
   }
 }
