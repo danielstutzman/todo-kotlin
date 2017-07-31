@@ -1,4 +1,4 @@
-@args (String currentPath, String alert, RockerBody content)
+@args (String currentPath, String alert, String csrfValue, RockerBody content)
 
 <!DOCTYPE html>
 <html>
@@ -79,7 +79,7 @@
     <script src="/assets/pages.js?body=1"></script>
     <script src="/assets/application.js?body=1"></script>
     <meta content="authenticity_token" name="csrf-param" />
-    <meta content="{{ .AuthenticityToken }}" name="csrf-token" />
+    <meta content="@csrfValue" name="csrf-token" />
   </head>
   <body>
     <div class='row-fluid'>

@@ -1,11 +1,11 @@
-@args (String currentUrl, String alert, SignUpForm form, SignUpErrors errors)
+@args (String currentUrl, String alert, String csrfValue, SignUpForm form, SignUpErrors errors)
 
-@views.devise_layout.template(currentUrl, alert) -> {
+@views.devise_layout.template(currentUrl, alert, csrfValue) -> {
   <h2>Sign up</h2>
   <form accept-charset="UTF-8" action="/users" class="simple_form new_user" id="new_user" method="post">
     <div style="margin:0;padding:0;display:inline">
       <input name="utf8" type="hidden" value="✓">
-      <input name="authenticity_token" type="hidden" value="{{ .AuthenticityToken }}" />
+      <input name="authenticity_token" type="hidden" value="@csrfValue" />
     </div>
 
     @if (errors.any()) {
