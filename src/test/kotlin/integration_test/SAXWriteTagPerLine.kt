@@ -11,9 +11,15 @@ public class SAXWriteTagPerLine(val writer: Writer) : DefaultHandler() {
                             atts: Attributes) {
     val attrMap = LinkedHashMap<String, String>() // preserve order
     for (i in 0..atts.length - 1) {
-      val name = atts.getLocalName(i)
-      val value = atts.getValue(i)
-      attrMap[name] = value
+      val attrName = atts.getLocalName(i)
+      val attrValue = atts.getValue(i)
+
+      if (attrName == "class") {
+        // Remove whitespace inside class attributes
+        attrMap[attrName] = attrValue.trim().replace(Regex("\\s+"), " ")
+      } else {
+        attrMap[attrName] = attrValue
+      }
     }
 
     val tag = localName.toLowerCase()
