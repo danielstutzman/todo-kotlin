@@ -16,7 +16,7 @@ public class SAXWriteTagPerLine(val writer: Writer) : DefaultHandler() {
       attrMap[name] = value
     }
 
-    val tag = localName!!.toLowerCase()
+    val tag = localName.toLowerCase()
     if (tag == "meta" && attrMap["name"] == "csrf-token") {
       attrMap["content"] = "MASKED"
     } else if (tag == "input" && attrMap["name"] == "authenticity_token") {
