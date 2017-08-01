@@ -3,9 +3,9 @@ package db
 import org.jooq.SQLDialect
 import org.jooq.generated.tables.Users.USERS
 import org.jooq.impl.DSL
+import webapp.ReqLog
 import java.sql.Connection
 import java.sql.Timestamp
-import kotlin.system.measureTimeMillis
 
 data class User(
     val id: Int,
@@ -26,49 +26,56 @@ class Db(private val conn: Connection) {
   private fun now() = Timestamp(System.currentTimeMillis().toLong())
 
   fun createUser(emailAnyCase: String, encryptedPassword: String): CreateUserResult {
-    val email = emailAnyCase.toLowerCase()
-
-    val user = try {
-      create.insertInto(USERS,
-          USERS.EMAIL,
-          USERS.ENCRYPTED_PASSWORD,
-          USERS.CREATED_AT,
-          USERS.UPDATED_AT)
-          .values(email, encryptedPassword, now(), now())
-          .returning(USERS.ID,
-              USERS.EMAIL,
-              USERS.ENCRYPTED_PASSWORD,
-              USERS.CREATED_AT,
-              USERS.UPDATED_AT)
-          .fetchOne()
-          .into(User::class.java)
-    } catch (e: org.jooq.exception.DataAccessException) {
-      val message = e.message ?: ""
-      if (message.contains("ERROR: duplicate key value violates unique constraint \"idx_users_email\"")) {
-        return EmailAlreadyTaken
-      } else {
-        throw e;
+    ReqLog.start()
+    try {
+      val email = emailAnyCase.toLowerCase()
+      val user = try {
+        create.insertInto(USERS,
+            USERS.EMAIL,
+            USERS.ENCRYPTED_PASSWORD,
+            USERS.CREATED_AT,
+            USERS.UPDATED_AT)
+            .values(email, encryptedPassword, now(), now())
+            .returning(USERS.ID,
+                USERS.EMAIL,
+                USERS.ENCRYPTED_PASSWORD,
+                USERS.CREATED_AT,
+                USERS.UPDATED_AT)
+            .fetchOne()
+            .into(User::class.java)
+      } catch (e: org.jooq.exception.DataAccessException) {
+        val message = e.message ?: ""
+        if (message.contains("ERROR: duplicate key value violates unique constraint \"idx_users_email\"")) {
+          return EmailAlreadyTaken
+        } else {
+          throw e;
+        }
       }
+      return UserCreated(user)
+    } finally {
+      ReqLog.finish()
     }
-    return UserCreated(user)
   }
 
   fun findUserByEmail(emailAnyCase: String): User? {
-    return create
-        .select(USERS.ID, USERS.EMAIL, USERS.ENCRYPTED_PASSWORD, USERS.CREATED_AT, USERS.UPDATED_AT)
-        .from(USERS)
-        .where(USERS.EMAIL.eq(emailAnyCase.toLowerCase()))
-        .fetchOneInto(User::class.java)
+    ReqLog.start()
+    try {
+      return create
+          .select(USERS.ID, USERS.EMAIL, USERS.ENCRYPTED_PASSWORD, USERS.CREATED_AT, USERS.UPDATED_AT)
+          .from(USERS)
+          .where(USERS.EMAIL.eq(emailAnyCase.toLowerCase()))
+          .fetchOneInto(User::class.java)
+    } finally {
+      ReqLog.finish()
+    }
   }
 
-  fun deleteUsers() = create.delete(USERS).execute()
-
-  private fun <T> bench2(name: String, toBench: () -> T): T {
-    var output: T? = null
-    var numMillis = measureTimeMillis {
-      output = toBench()
+  fun deleteUsers() = {
+    ReqLog.start()
+    try {
+      create.delete(USERS).execute()
+    } finally {
+      ReqLog.finish()
     }
-    println("${name} took ${numMillis} ms")
-    return output!!
   }
 }

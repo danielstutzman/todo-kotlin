@@ -13,30 +13,31 @@ sealed class UsersSignUpPostOutput
 data class SignUpFailure(val errors: SignUpErrors) : UsersSignUpPostOutput()
 data class SignUpSuccess(val setUserId: Int) : UsersSignUpPostOutput()
 
-fun App.handleUsersSignUpPost(reqLog: ReqLog, form: SignUpForm): UsersSignUpPostOutput {
-  if (form.passwordConfirmation != form.password) {
-    return SignUpFailure(SignUpErrors().setPasswordConfirmation(
-        "doesn't match Password"))
-  }
+fun App.handleUsersSignUpPost(form: SignUpForm): UsersSignUpPostOutput {
+  ReqLog.start()
+  try {
+    if (form.passwordConfirmation != form.password) {
+      return SignUpFailure(SignUpErrors().setPasswordConfirmation(
+          "doesn't match Password"))
+    }
 
-  if (form.password.length < MIN_PASSWORD_LENGTH) {
-    return SignUpFailure(SignUpErrors().setPassword(
-        "is too short (minimum is ${MIN_PASSWORD_LENGTH} characters)"))
-  }
+    if (form.password.length < MIN_PASSWORD_LENGTH) {
+      return SignUpFailure(SignUpErrors().setPassword(
+          "is too short (minimum is ${MIN_PASSWORD_LENGTH} characters)"))
+    }
 
-  val encryptedPassword = reqLog.log("passwordHasher.hash") {
-    passwordHasher.hash(form.password)
-  }
+    val encryptedPassword = passwordHasher.hash(form.password)
 
-  var result = reqLog.log("db.createUser") {
-    db.createUser(form.email, encryptedPassword)
-  }
+    var result = db.createUser(form.email, encryptedPassword)
 
-  return when (result) {
-    is EmailAlreadyTaken ->
-      return SignUpFailure(SignUpErrors().setEmail(
-          "has already been taken"))
-    is UserCreated ->
-      SignUpSuccess(result.user.id)
+    return when (result) {
+      is EmailAlreadyTaken ->
+        return SignUpFailure(SignUpErrors().setEmail(
+            "has already been taken"))
+      is UserCreated ->
+        SignUpSuccess(result.user.id)
+    }
+  } finally {
+    ReqLog.finish()
   }
 }

@@ -24,7 +24,8 @@ data class Webapp(
   }
 
   val usersSignInGet = { req: Request, res: Response ->
-    ReqLog(req).start { reqLog ->
+    ReqLog.start(req)
+    try {
       val oldSession = sessionStorage.loadSessionAndCheckCsrf(req)
       val form = SignInForm("", "")
 
@@ -35,11 +36,14 @@ data class Webapp(
           newSession.csrfValue,
           form
       ).render().toString()
+    } finally {
+      ReqLog.finish()
     }
   }
 
   val usersSignInPost = { req: Request, res: Response ->
-    ReqLog(req).start { reqLog ->
+    ReqLog.start(req)
+    try {
       val oldSession = sessionStorage.loadSessionAndCheckCsrf(req)
       val form = SignInForm(
           req.queryParams("user[email]")!!,
@@ -59,11 +63,14 @@ data class Webapp(
         is SignInSuccess ->
           res.redirect("/done")
       }
+    } finally {
+      ReqLog.finish()
     }
   }
 
   val usersSignUpGet = { req: Request, res: Response ->
-    ReqLog(req).start { reqLog ->
+    ReqLog.start(req)
+    try {
       val oldSession = sessionStorage.loadSessionAndCheckCsrf(req)
       val form = SignUpForm("", "", "")
 
@@ -75,18 +82,21 @@ data class Webapp(
           form,
           SignUpErrors()
       ).render().toString()
+    } finally {
+      ReqLog.finish()
     }
   }
 
   val usersSignUpPost = { req: Request, res: Response ->
-    ReqLog(req).start { reqLog ->
+    ReqLog.start(req)
+    try {
       val oldSession = sessionStorage.loadSessionAndCheckCsrf(req)
       val form = SignUpForm(
           req.queryParams("user[email]")!!,
           req.queryParams("user[password]")!!,
           req.queryParams("user[password_confirmation]")!!)
 
-      val output = app.handleUsersSignUpPost(reqLog, form)
+      val output = app.handleUsersSignUpPost(form)
 
       when (output) {
         is SignUpFailure ->
@@ -105,37 +115,8 @@ data class Webapp(
           res.redirect("/")
         }
       }
+    } finally {
+      ReqLog.finish()
     }
-  }
-}
-
-object nextRequestId {
-  var _nextRequestId: Int = 1
-
-  fun getNextRequestId(): Int {
-    synchronized(this) {
-      _nextRequestId += 1
-      return _nextRequestId
-    }
-  }
-}
-
-data class ReqLog(val req: Request) {
-  val reqId = nextRequestId.getNextRequestId()
-
-  fun <T> start(block: (reqLog: ReqLog) -> T): T {
-    val startedAt = System.currentTimeMillis()
-    val toReturn = block(this)
-    val millis = System.currentTimeMillis() - startedAt
-    println("method=${req.requestMethod()} path=${req.pathInfo()} millis=${millis} reqId=${reqId}")
-    return toReturn
-  }
-
-  fun <T> log(label: String, block: () -> T): T {
-    val startedAt = System.currentTimeMillis()
-    val toReturn = block()
-    val millis = System.currentTimeMillis() - startedAt
-    println("label=${label} millis=${millis} reqId=${reqId}")
-    return toReturn
   }
 }

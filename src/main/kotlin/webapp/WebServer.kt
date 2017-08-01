@@ -4,8 +4,6 @@ import app.App
 import app.FakePasswordHasher
 import app.SecurePasswordHasher
 import db.Db
-import spark.Request
-import spark.Response
 import spark.Service
 import java.io.File
 import java.sql.DriverManager
@@ -52,16 +50,4 @@ fun startServer(config: Config): Service {
   service.post("/users", webapp.usersSignUpPost)
 
   return service
-}
-
-fun bench(route: (req: Request, res: Response) -> Any): (Request, Response) -> Any {
-  return { req, res ->
-    val startTime = System.currentTimeMillis()
-
-    val out = route(req, res)
-
-    val endTime = System.currentTimeMillis()
-    System.out.println("${req.requestMethod()} ${req.pathInfo()} millis=${endTime - startTime}")
-    out
-  }
 }

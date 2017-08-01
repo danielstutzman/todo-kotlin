@@ -25,21 +25,27 @@ data class Session(
 
 data class SessionStorage(val secret: String) {
   val secureRandom = SecureRandom.getInstanceStrong()!!
+
   fun loadSessionAndCheckCsrf(req: Request): Session {
-    val session = loadSession(req)
+    ReqLog.start()
+    try {
+      val session = loadSession(req)
 
-    if (req.requestMethod() != "GET") {
-      if (session.csrfValue == null) {
-        throw RuntimeException("Expected non-null session.csrfValue")
+      if (req.requestMethod() != "GET") {
+        if (session.csrfValue == null) {
+          throw RuntimeException("Expected non-null session.csrfValue")
+        }
+        if (req.queryParams("authenticity_token") != session.csrfValue) {
+          println("Expected csrfValue ${session.csrfValue} but got ${req.queryParams("authenticity_token")}")
+          throw Spark.halt(401,
+              "Expected csrfValue ${session.csrfValue} but got ${req.queryParams("authenticity_token")}")
+        }
       }
-      if (req.queryParams("authenticity_token") != session.csrfValue) {
-        println("Expected csrfValue ${session.csrfValue} but got ${req.queryParams("authenticity_token")}")
-        throw Spark.halt(401,
-            "Expected csrfValue ${session.csrfValue} but got ${req.queryParams("authenticity_token")}")
-      }
+
+      return session
+    } finally {
+      ReqLog.finish()
     }
-
-    return session
   }
 
   private fun loadSession(req: Request): Session {
@@ -86,22 +92,27 @@ data class SessionStorage(val secret: String) {
   }
 
   fun updateSession(oldSession: Session, res: Response): Session {
-    val bytes = ByteArray(CSRF_VALUE_LENGTH * 6 / 8)
-    secureRandom.nextBytes(bytes)
-    val newCsrfValue = Base64.getUrlEncoder().encodeToString(bytes)
-    val newSession = oldSession.copy(csrfValue = newCsrfValue)
-    val sessionSerialized = Gson().toJson(newSession)
+    ReqLog.start()
+    try {
+      val bytes = ByteArray(CSRF_VALUE_LENGTH * 6 / 8)
+      secureRandom.nextBytes(bytes)
+      val newCsrfValue = Base64.getUrlEncoder().encodeToString(bytes)
+      val newSession = oldSession.copy(csrfValue = newCsrfValue)
+      val sessionSerialized = Gson().toJson(newSession)
 
-    val mac = Mac.getInstance(HMAC_SHA1_ALGORITHM)
-    val signingKey = SecretKeySpec(secret.toByteArray(), HMAC_SHA1_ALGORITHM)
-    mac.init(signingKey)
-    val hmac = String(Base64.getUrlEncoder().encode(
-        mac.doFinal(sessionSerialized.toByteArray()))).replace("=", "")
+      val mac = Mac.getInstance(HMAC_SHA1_ALGORITHM)
+      val signingKey = SecretKeySpec(secret.toByteArray(), HMAC_SHA1_ALGORITHM)
+      mac.init(signingKey)
+      val hmac = String(Base64.getUrlEncoder().encode(
+          mac.doFinal(sessionSerialized.toByteArray()))).replace("=", "")
 
-    val signed = URLEncoder.encode(sessionSerialized, "UTF-8") + "|" +
-        hmac
-    res.cookie(COOKIE_NAME, signed)
+      val signed = URLEncoder.encode(sessionSerialized, "UTF-8") + "|" +
+          hmac
+      res.cookie(COOKIE_NAME, signed)
 
-    return newSession
+      return newSession
+    } finally {
+      ReqLog.finish()
+    }
   }
 }
