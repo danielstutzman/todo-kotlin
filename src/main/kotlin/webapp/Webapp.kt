@@ -12,7 +12,6 @@ import spark.Response
 import views.SignInForm
 import views.SignUpErrors
 import views.SignUpForm
-import kotlin.system.measureTimeMillis
 
 const val SIGNED_UP_BUT_UNCONFIRMED = "A message with a confirmation link has been sent to your email address. Please open the link to activate your account."
 
@@ -29,6 +28,7 @@ data class Webapp(
     val form = SignInForm("", "")
 
     val newSession = sessionStorage.updateSession(oldSession, res)
+    logRequest(req, newSession)
     views.sign_in.template(
         req.pathInfo(),
         newSession.flashNotice,
@@ -46,6 +46,7 @@ data class Webapp(
     val output = app.handleUsersSignInPost(form)
 
     val newSession = sessionStorage.updateSession(oldSession, res)
+    logRequest(req, newSession)
     when (output) {
       is SignInFailure ->
         views.sign_in.template(
@@ -64,6 +65,7 @@ data class Webapp(
     val form = SignUpForm("", "", "")
 
     val newSession = sessionStorage.updateSession(oldSession, res)
+    logRequest(req, newSession)
     views.sign_up.template(
         req.pathInfo(),
         null,
@@ -92,21 +94,18 @@ data class Webapp(
             output.errors
         ).render().toString()
       is SignUpSuccess -> {
-        val newSession = oldSession
-            .setUserId(output.setUserId)
-            .setFlashNotice(SIGNED_UP_BUT_UNCONFIRMED)
+        val newSession = oldSession.copy(
+            userId = output.setUserId,
+            flashNotice = SIGNED_UP_BUT_UNCONFIRMED)
         sessionStorage.updateSession(newSession, res)
+        logRequest(req, newSession)
         res.redirect("/")
       }
     }
   }
 
-  private fun <T> bench2(name: String, toBench: () -> T): T {
-    var output: T? = null
-    var numMillis = measureTimeMillis {
-      output = toBench()
-    }
-    println("${name} took ${numMillis} ms")
-    return output!!
+  private fun logRequest(req: Request, session: Session) {
+    val millis = System.currentTimeMillis() - session.requestStartedAt
+    println("${req.requestMethod()} ${req.pathInfo()} millis=${millis} requestId=${session.requestId}")
   }
 }

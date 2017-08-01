@@ -61,7 +61,7 @@ fun bench(route: (req: Request, res: Response) -> Any): (Request, Response) -> A
     val out = route(req, res)
 
     val endTime = System.currentTimeMillis()
-    System.out.println("${req.requestMethod()} ${req.pathInfo()} took ${endTime - startTime} ms")
+    System.out.println("${req.requestMethod()} ${req.pathInfo()} millis=${endTime - startTime}")
     out
   }
 }
