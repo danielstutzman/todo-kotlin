@@ -15,27 +15,12 @@ const val COOKIE_NAME = "todo-kotlin"
 const val CSRF_VALUE_LENGTH = 24
 const val HMAC_SHA1_ALGORITHM = "HmacSHA1";
 
-object nextRequestId {
-  private var _nextRequestId = 1
-
-  fun getNextRequestId(): Int {
-    synchronized(this) {
-      _nextRequestId += 1
-      return _nextRequestId
-    }
-  }
-}
-
 data class Session(
-    val requestId: Int,
-    val requestStartedAt: Long,
     val userId: Int?,
     val csrfValue: String?,
     val flashNotice: String?
 ) {
-  constructor(requestId: Int, requestStartedAt: Long) :
-      this(requestId, requestStartedAt, null, null, null) {
-  }
+  constructor() : this(null, null, null) {}
 }
 
 data class SessionStorage(val secret: String) {
@@ -58,28 +43,24 @@ data class SessionStorage(val secret: String) {
   }
 
   private fun loadSession(req: Request): Session {
-    val emptySession = Session(
-        requestId = nextRequestId.getNextRequestId(),
-        requestStartedAt = System.currentTimeMillis())
-
     val cookieValue = req.cookie(COOKIE_NAME)
     if (cookieValue == null) {
       println("LOAD SESSION: found no cookievalue")
-      return emptySession
+      return Session()
     }
 
     val parts = cookieValue.split("|")
 
     if (parts.size != 2) {
       println("LOAD SESSION: wrong num parts")
-      return emptySession
+      return Session()
     }
 
     val sessionSerialized = try {
       URLDecoder.decode(parts[0], "UTF-8")
     } catch (e: java.lang.IllegalArgumentException) {
       println("LOAD SESSION: Couldn't url encode")
-      return emptySession
+      return Session()
     }
     val oldHmac = parts[1]
 
@@ -91,18 +72,16 @@ data class SessionStorage(val secret: String) {
 
     if (oldHmac != newHmac) {
       println("LOAD SESSION: Expected HMAC ${oldHmac} but got ${newHmac}")
-      return emptySession
+      return Session()
     }
 
     try {
       val session = Gson().fromJson(
           URLDecoder.decode(sessionSerialized, "UTF-8"),
           Session::class.java)
-      return session.copy(
-          requestId = emptySession.requestId,
-          requestStartedAt = emptySession.requestStartedAt)
+      return session
     } catch (e: com.google.gson.JsonSyntaxException) {
-      return emptySession
+      return Session()
     }
   }
 
