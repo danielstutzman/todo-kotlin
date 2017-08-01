@@ -23,7 +23,7 @@ fun startServer(config: Config): Service {
   val conn = DriverManager.getConnection(jdbcUrl, creds.username, creds.password)
   val db = Db(conn)
   val passwordHasher =
-      if (config.hashPasswords) SecurePasswordHasher(31)
+      if (config.hashPasswords) SecurePasswordHasher(12)
       else FakePasswordHasher()
 
   val app = App(db,
