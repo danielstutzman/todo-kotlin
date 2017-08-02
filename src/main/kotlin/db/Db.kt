@@ -70,7 +70,7 @@ class Db(private val conn: Connection) {
     }
   }
 
-  fun deleteUsers() = {
+  fun deleteUsers() {
     ReqLog.start()
     try {
       create.delete(USERS).execute()
