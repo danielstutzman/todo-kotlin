@@ -17,3 +17,7 @@ Afterwards you can just run `./fastbuild serve`
 # How to run migations
 
 `mvn flyway:migrate jooq-codegen:generate`
+
+# How to deploy
+
+`mvn package`
