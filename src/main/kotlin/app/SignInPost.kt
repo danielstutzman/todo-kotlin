@@ -20,6 +20,11 @@ fun App.handleUsersSignInPost(form: SignInForm): UsersSignInPostOutput {
       return SignInFailure(FlashMessage("notice", "Invalid email or password."))
     }
 
+    if (user.confirmedAt == null) {
+      return SignInFailure(FlashMessage("alert", "You have to confirm your account before continuing."))
+    }
+
+
     return SignInSuccess(user.id)
   } finally {
     ReqLog.finish()

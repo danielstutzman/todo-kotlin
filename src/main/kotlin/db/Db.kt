@@ -11,6 +11,7 @@ data class User(
     val id: Int,
     val email: String,
     val encryptedPassword: String,
+    val confirmedAt: Timestamp?,
     val createdAt: Timestamp,
     val updatedAt: Timestamp
 )
@@ -61,7 +62,12 @@ class Db(private val conn: Connection) {
     ReqLog.start()
     try {
       return create
-          .select(USERS.ID, USERS.EMAIL, USERS.ENCRYPTED_PASSWORD, USERS.CREATED_AT, USERS.UPDATED_AT)
+          .select(USERS.ID,
+              USERS.EMAIL,
+              USERS.ENCRYPTED_PASSWORD,
+              USERS.CONFIRMED_AT,
+              USERS.CREATED_AT,
+              USERS.UPDATED_AT)
           .from(USERS)
           .where(USERS.EMAIL.eq(emailAnyCase.toLowerCase()))
           .fetchOneInto(User::class.java)
