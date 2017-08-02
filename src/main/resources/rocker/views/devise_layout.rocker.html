@@ -1,4 +1,4 @@
-@args (String currentPath, String alert, String csrfValue, RockerBody content)
+@args (String currentPath, FlashMessage flash, String csrfValue, RockerBody content)
 
 <!DOCTYPE html>
 <html>
@@ -98,8 +98,8 @@
     </div>
     <div class='row-fluid'>
       <div class='span4 offset4'>
-        @if (alert != null) {
-          <div class="flash notice">@alert</div>
+        @if (flash != null) {
+          <div class="flash @flash.type">@flash.message</div>
         }
 
         @content

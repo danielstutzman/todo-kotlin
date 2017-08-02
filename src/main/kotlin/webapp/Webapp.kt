@@ -9,11 +9,15 @@ import app.handleUsersSignInPost
 import app.handleUsersSignUpPost
 import spark.Request
 import spark.Response
+import views.FlashMessage
 import views.SignInForm
 import views.SignUpErrors
 import views.SignUpForm
 
-const val SIGNED_UP_BUT_UNCONFIRMED = "A message with a confirmation link has been sent to your email address. Please open the link to activate your account."
+val SIGNED_UP_BUT_UNCONFIRMED = FlashMessage(
+    "notice",
+    "A message with a confirmation link has been sent to your email address. Please open the link to activate your account."
+)
 
 data class Webapp(
     val app: App,
@@ -32,7 +36,7 @@ data class Webapp(
       val newSession = sessionStorage.updateSession(oldSession, res)
       views.sign_in.template(
           req.pathInfo(),
-          newSession.flashNotice,
+          newSession.flash,
           newSession.csrfValue,
           form
       ).render().toString()
@@ -56,9 +60,9 @@ data class Webapp(
         is SignInFailure ->
           views.sign_in.template(
               req.pathInfo(),
-              output.alert,
+              output.flash,
               newSession.csrfValue,
-              form
+              SignInForm("", "")
           ).render().toString()
         is SignInSuccess ->
           res.redirect("/done")
@@ -110,7 +114,7 @@ data class Webapp(
         is SignUpSuccess -> {
           val newSession = oldSession.copy(
               userId = output.setUserId,
-              flashNotice = SIGNED_UP_BUT_UNCONFIRMED)
+              flash = SIGNED_UP_BUT_UNCONFIRMED)
           sessionStorage.updateSession(newSession, res)
           res.redirect("/")
         }

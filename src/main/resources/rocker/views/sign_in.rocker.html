@@ -1,6 +1,6 @@
-@args (String currentUrl, String alert, String csrfValue, SignInForm form)
+@args (String currentUrl, FlashMessage flash, String csrfValue, SignInForm form)
 
-@views.devise_layout.template(currentUrl, alert, csrfValue) -> {
+@views.devise_layout.template(currentUrl, flash, csrfValue) -> {
   <h2>Sign in</h2>
   <form accept-charset="UTF-8" action="/users/sign_in" class="simple_form new_user" id="new_user" method="post">
     <div style="margin:0;padding:0;display:inline">

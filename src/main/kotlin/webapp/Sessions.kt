@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import spark.Request
 import spark.Response
 import spark.Spark
+import views.FlashMessage
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.security.SecureRandom
@@ -18,7 +19,7 @@ const val HMAC_SHA1_ALGORITHM = "HmacSHA1";
 data class Session(
     val userId: Int?,
     val csrfValue: String?,
-    val flashNotice: String?
+    val flash: FlashMessage?
 ) {
   constructor() : this(null, null, null) {}
 }
