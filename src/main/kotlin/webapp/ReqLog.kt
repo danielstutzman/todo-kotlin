@@ -18,7 +18,9 @@ data class Step(
     val className: String,
     val methodName: String,
     val startMillis: Long,
-    val reqId: Int) {
+    val reqId: Int,
+    val method: String?,
+    val path: String?) {
 }
 
 object ReqLog {
@@ -35,24 +37,38 @@ object ReqLog {
         call.className.substringAfterLast("."),
         call.methodName,
         System.currentTimeMillis(),
-        reqId
+        reqId,
+        req.requestMethod(),
+        req.pathInfo()
     ))
   }
 
   fun start() {
     val localSteps = steps.get()
-    val call = Thread.currentThread().getStackTrace()[2]
-    localSteps.push(Step(
-        call.className.substringAfterLast("."),
-        call.methodName,
-        System.currentTimeMillis(),
-        localSteps.last.reqId
-    ))
+    if (localSteps.size > 0) {
+      val call = Thread.currentThread().getStackTrace()[2]
+      localSteps.push(Step(
+          call.className.substringAfterLast("."),
+          call.methodName,
+          System.currentTimeMillis(),
+          localSteps.last.reqId,
+          null,
+          null
+      ))
+    }
   }
 
   fun finish() {
-    val step = steps.get().pop()
-    val millis = System.currentTimeMillis() - step.startMillis
-    println("call=${step.className}.${step.methodName} ms=${millis} reqId=${step.reqId}")
+    val localSteps = steps.get()
+    if (localSteps.size > 0) {
+      val step = localSteps.pop()
+      val millis = System.currentTimeMillis() - step.startMillis
+      val methodAndPath =
+          if (step.method != null)
+            "method=${step.method} path=${step.path} "
+          else
+            ""
+      println("${methodAndPath}call=${step.className}.${step.methodName} ms=${millis} reqId=${step.reqId}")
+    }
   }
 }
