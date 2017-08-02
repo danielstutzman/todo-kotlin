@@ -39,7 +39,12 @@ public class SAXWriteTagPerLine(val writer: Writer) : DefaultHandler() {
     writer.write("<${tag}")
     for ((name, value) in attrMap) {
       if (value.contains(' ')) {
-        writer.write(" ${name}='${value}'")
+        if (name == "class") {
+          val valueSorted = value.split(" ").sorted().joinToString(" ")
+          writer.write(" ${name}='${valueSorted}'")
+        } else {
+          writer.write(" ${name}='${value}'")
+        }
       } else {
         writer.write(" ${name}=${value}")
       }
