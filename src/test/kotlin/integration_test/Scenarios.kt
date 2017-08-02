@@ -37,6 +37,14 @@ fun runScenarios(
       "user[password_confirmation]" to "different"
   )))
 
+  // Scenario: sign_up_short
+  db.deleteUsers()
+  handleResult("sign_up_short", doFormPost(urlPrefix,
+      "/users/sign_up", "/users", params + mapOf(
+      "user[password]" to "short",
+      "user[password_confirmation]" to "short"
+  )))
+
 }
 
 fun doFormPost(urlPrefix: String, getPath: String, postPath: String, params: Map<String, String>): String {
