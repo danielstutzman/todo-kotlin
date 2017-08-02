@@ -5,10 +5,17 @@ import org.xml.sax.helpers.DefaultHandler
 import java.io.Writer
 
 public class SAXWriteTagPerLine(val writer: Writer) : DefaultHandler() {
+  var hadCharacters = false
+
   override fun startElement(namespaceURI: String,
                             localName: String,
                             qName: String,
                             atts: Attributes) {
+    if (hadCharacters) {
+      writer.write("\n")
+      hadCharacters = false
+    }
+
     val attrMap = LinkedHashMap<String, String>() // preserve order
     for (i in 0..atts.length - 1) {
       val attrName = atts.getLocalName(i)
@@ -47,11 +54,16 @@ public class SAXWriteTagPerLine(val writer: Writer) : DefaultHandler() {
         .trim()
     if (s != "") {
       writer.write(s)
-      writer.write("\n")
+      hadCharacters = true
     }
   }
 
   override fun endElement(uri: String?, localName: String?, qName: String?) {
+    if (hadCharacters) {
+      writer.write("\n")
+      hadCharacters = false
+    }
+
     val tag = localName!!.toLowerCase()
     writer.write("</${tag}>\n")
   }
