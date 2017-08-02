@@ -1,5 +1,6 @@
 package webapp
 
+import org.slf4j.LoggerFactory
 import spark.Request
 import java.util.LinkedList
 
@@ -24,6 +25,8 @@ data class Step(
 }
 
 object ReqLog {
+  private val logger = LoggerFactory.getLogger(ReqLog::class.java)
+
   val steps = object : ThreadLocal<LinkedList<Step>>() {
     override fun initialValue(): LinkedList<Step> {
       return LinkedList<Step>()
@@ -68,7 +71,7 @@ object ReqLog {
             "method=${step.method} path=${step.path} "
           else
             ""
-      println("${methodAndPath}call=${step.className}.${step.methodName} ms=${millis} reqId=${step.reqId}")
+      logger.info("${methodAndPath}call=${step.className}.${step.methodName} ms=${millis} reqId=${step.reqId}")
     }
   }
 }

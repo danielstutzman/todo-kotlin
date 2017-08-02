@@ -1,6 +1,7 @@
 package webapp
 
 import com.google.gson.Gson
+import org.slf4j.LoggerFactory
 import spark.Request
 import spark.Response
 import spark.Spark
@@ -25,7 +26,8 @@ data class Session(
 }
 
 data class SessionStorage(val secret: String) {
-  val secureRandom = SecureRandom.getInstanceStrong()!!
+  private val secureRandom = SecureRandom.getInstanceStrong()!!
+  private val logger = LoggerFactory.getLogger(SessionStorage::class.java)
 
   fun loadSessionAndCheckCsrf(req: Request): Session {
     ReqLog.start()
@@ -37,7 +39,7 @@ data class SessionStorage(val secret: String) {
           throw RuntimeException("Expected non-null session.csrfValue")
         }
         if (req.queryParams("authenticity_token") != session.csrfValue) {
-          println("Expected csrfValue ${session.csrfValue} but got ${req.queryParams("authenticity_token")}")
+          logger.warn("Expected csrfValue ${session.csrfValue} but got ${req.queryParams("authenticity_token")}")
           throw Spark.halt(401,
               "Expected csrfValue ${session.csrfValue} but got ${req.queryParams("authenticity_token")}")
         }
@@ -52,21 +54,21 @@ data class SessionStorage(val secret: String) {
   private fun loadSession(req: Request): Session {
     val cookieValue = req.cookie(COOKIE_NAME)
     if (cookieValue == null) {
-      println("LOAD SESSION: found no cookievalue")
+      logger.info("method=load_session error=no_cookie_value")
       return Session()
     }
 
     val parts = cookieValue.split("|")
 
     if (parts.size != 2) {
-      println("LOAD SESSION: wrong num parts")
+      logger.warn("method=load_session cookieValue=\"${cookieValue}\" error=wrong_num_parts")
       return Session()
     }
 
     val sessionSerialized = try {
       URLDecoder.decode(parts[0], "UTF-8")
     } catch (e: java.lang.IllegalArgumentException) {
-      println("LOAD SESSION: Couldn't url encode")
+      logger.warn("method=load_session cookieValue=\"${cookieValue}\" error=couldnt_url_decode")
       return Session()
     }
     val oldHmac = parts[1]
@@ -78,7 +80,7 @@ data class SessionStorage(val secret: String) {
         mac.doFinal(sessionSerialized.toByteArray()))).replace("=", "")
 
     if (oldHmac != newHmac) {
-      println("LOAD SESSION: Expected HMAC ${oldHmac} but got ${newHmac}")
+      logger.warn("method=load_session cookieValue=\"${cookieValue}\" expected_hmac=\"${oldHmac}\" actual_hmac=\"${newHmac}\" error=wrong_hmac")
       return Session()
     }
 
@@ -88,6 +90,7 @@ data class SessionStorage(val secret: String) {
           Session::class.java)
       return session
     } catch (e: com.google.gson.JsonSyntaxException) {
+      logger.warn("method=load_session cookieValue=\"${cookieValue}\" exception=${e.message} error=bad_json")
       return Session()
     }
   }

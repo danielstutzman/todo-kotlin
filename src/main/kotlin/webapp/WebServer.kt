@@ -4,6 +4,7 @@ import app.App
 import app.FakePasswordHasher
 import app.SecurePasswordHasher
 import db.Db
+import org.slf4j.LoggerFactory
 import spark.Service
 import java.io.File
 import java.sql.DriverManager
@@ -15,6 +16,8 @@ fun main(args: Array<String>) {
 }
 
 fun startServer(config: Config): Service {
+  val logger = LoggerFactory.getLogger("webapp/WebServer.kt")
+
   System.setProperty("org.jooq.no-logo", "true")
   val creds = config.postgresCredentials
   val jdbcUrl = "jdbc:postgresql://${creds.hostname}:${creds.port}/${creds.databaseName}"
@@ -29,7 +32,7 @@ fun startServer(config: Config): Service {
       app.SecureTokenGenerator(16))
   val webapp = Webapp(app, SessionStorage("secret"))
 
-  println("Starting server on ${config.port}...")
+  logger.info("Starting server port=${config.port}")
   val service = Service.ignite().port(config.port)
 
   service.initExceptionHandler { e ->
