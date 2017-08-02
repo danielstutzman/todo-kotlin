@@ -28,6 +28,15 @@ fun runScenarios(
       "user[password]" to "password",
       "user[password_confirmation]" to "password"
   )))
+
+  // Scenario: sign_up_mismatch
+  db.deleteUsers()
+  handleResult("sign_up_mismatch", doFormPost(urlPrefix,
+      "/users/sign_up", "/users", params + mapOf(
+      "user[password]" to "password",
+      "user[password_confirmation]" to "different"
+  )))
+
 }
 
 fun doFormPost(urlPrefix: String, getPath: String, postPath: String, params: Map<String, String>): String {
