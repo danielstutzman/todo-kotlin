@@ -2,13 +2,13 @@
 
 `mvn compile && java -cp $(cat .mvn-classpath):target/classes WebServerKt`
 
-(Optionally, run `./fastbuild` instead of `mvn compile` or `mvn test-compile`)
+Afterwards you can just run `./fastbuild serve`
 
-# How to run test
+# How to run integration test
 
-`mvn test-compile && java -cp $(cat .mvn-classpath):target/classes:target/test-classes IntegrationTest`
+`./fastbuild scrape` to scrape from old server and save output
 
-(Optionally, run `./fastbuild` instead of `mvn compile` or `mvn test-compile`)
+`./fastbuild compare` to scrape from new server and compare to saved output
 
 # How to delete database
 

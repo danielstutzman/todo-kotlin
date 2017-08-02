@@ -1,5 +1,4 @@
 #!/bin/bash -e
-
 NAILGUN_DIR=../nailgun-nailgun-all-0.9.1
 KOTLINC_DIR=../kotlinc
 
@@ -48,3 +47,14 @@ time $NAILGUN_DIR/ng \
   `find src/test/kotlin -name "*.kt"` \
   -d $PWD/target/classes \
   -cp `cat .mvn-classpath`:target/classes
+
+if [ "$1" == "scrape" ]; then
+  java -cp $(cat .mvn-classpath):target/classes \
+    integration_test.ScrapeOldServerKt
+elif [ "$1" == "compare" ]; then
+  java -cp $(cat .mvn-classpath):target/classes \
+    integration_test.IntegrationTestKt
+elif [ "$1" == "serve" ]; then
+  java -cp $(cat .mvn-classpath):target/classes \
+    webapp.WebServerKt
+fi
