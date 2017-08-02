@@ -20,8 +20,7 @@ data class Step(
     val methodName: String,
     val startMillis: Long,
     val reqId: Int,
-    val method: String?,
-    val path: String?) {
+    val reqParts: String?) {
 }
 
 object ReqLog {
@@ -41,8 +40,14 @@ object ReqLog {
         call.methodName,
         System.currentTimeMillis(),
         reqId,
-        req.requestMethod(),
-        req.pathInfo()
+        "scheme=${req.scheme()} " +
+            "host=${req.host()} " +
+            "method=${req.requestMethod()} " +
+            "path=${req.pathInfo()} " +
+            "query=\"${req.queryString()}\" " +
+            "userAgent=\"${req.userAgent()}\" " +
+            "protocol=${req.protocol()} "
+
     ))
   }
 
@@ -55,7 +60,6 @@ object ReqLog {
           call.methodName,
           System.currentTimeMillis(),
           localSteps.last.reqId,
-          null,
           null
       ))
     }
@@ -66,12 +70,7 @@ object ReqLog {
     if (localSteps.size > 0) {
       val step = localSteps.pop()
       val millis = System.currentTimeMillis() - step.startMillis
-      val methodAndPath =
-          if (step.method != null)
-            "method=${step.method} path=${step.path} "
-          else
-            ""
-      logger.info("${methodAndPath}call=${step.className}.${step.methodName} ms=${millis} reqId=${step.reqId}")
+      logger.info("${step.reqParts ?: ""}call=${step.className}.${step.methodName} ms=${millis} reqId=${step.reqId}")
     }
   }
 }
