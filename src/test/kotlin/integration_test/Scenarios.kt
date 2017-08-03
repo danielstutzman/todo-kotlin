@@ -2,6 +2,7 @@ package integration_test
 
 import db.Db
 import db.User
+import db.UserCreated
 import java.net.URL
 
 fun runScenarios(
@@ -75,8 +76,14 @@ fun runSignInScenarios(
 
   // Scenario: sign_in_needs_confirm
   db.deleteUsers()
-  db.createUser(savedUser.email, savedUser.encryptedPassword)
+  db.createUser(savedUser.email, savedUser.encryptedPassword) as UserCreated
   handleResult("sign_in_needs_confirm", doFormPost(urlPrefix,
+      "/users/sign_in", "/users/sign_in", params))  // Scenario: sign_in_needs_confirm
+
+  db.deleteUsers()
+  val userCreated = db.createUser(savedUser.email, savedUser.encryptedPassword) as UserCreated
+  db.confirmUser(userCreated.user.id, db.now())
+  handleResult("sign_in_successful", doFormPost(urlPrefix,
       "/users/sign_in", "/users/sign_in", params))
 }
 

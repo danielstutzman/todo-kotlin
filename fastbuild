@@ -4,7 +4,7 @@ KOTLINC_DIR=../kotlinc
 
 if [[ `ps aux | grep NGServer | grep -v grep` = "" ]]; then
   echo "Starting Nailgun server..."
-  java -Xmx256M -Xms32M -noverify \
+  java -Xmx1024M -Xms32M -noverify \
     -cp $NAILGUN_DIR/nailgun-server/target/classes:$KOTLINC_DIR/lib/kotlin-preloader.jar:$KOTLINC_DIR/lib/kotlin-compiler.jar \
     com.martiansoftware.nailgun.NGServer &
 fi

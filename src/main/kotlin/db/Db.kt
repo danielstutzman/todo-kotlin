@@ -24,7 +24,13 @@ class Db(private val conn: Connection) {
 
   private val create = DSL.using(conn, SQLDialect.POSTGRES_9_5)
 
-  private fun now() = Timestamp(System.currentTimeMillis().toLong())
+  fun now() = Timestamp(System.currentTimeMillis().toLong())
+
+  private fun mustAffectOneRow(numRowsAffected: Int) =
+      if (numRowsAffected == 1) { // Do nothing
+      } else {
+        throw RuntimeException("numRowsAffected ${numRowsAffected} != 1")
+      }
 
   fun createUser(emailAnyCase: String, encryptedPassword: String): CreateUserResult {
     ReqLog.start()
@@ -80,6 +86,20 @@ class Db(private val conn: Connection) {
     ReqLog.start()
     try {
       create.delete(USERS).execute()
+    } finally {
+      ReqLog.finish()
+    }
+  }
+
+  fun confirmUser(userId: Int, confirmedAt: Timestamp) {
+    ReqLog.start()
+    try {
+      mustAffectOneRow(create
+          .update(USERS)
+          .set(USERS.CONFIRMED_AT, confirmedAt)
+          .where(USERS.ID.eq(userId))
+          .execute()
+      )
     } finally {
       ReqLog.finish()
     }
