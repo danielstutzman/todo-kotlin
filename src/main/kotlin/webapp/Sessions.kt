@@ -16,6 +16,7 @@ import javax.crypto.spec.SecretKeySpec
 const val COOKIE_NAME = "todo-kotlin"
 const val CSRF_VALUE_LENGTH = 24
 const val HMAC_SHA1_ALGORITHM = "HmacSHA1";
+const val YEAR_IN_SECONDS = 60 * 60 * 24 * 366
 
 data class Session(
     val userId: Int?,
@@ -115,7 +116,7 @@ data class SessionStorage(val secret: String) {
 
       val signed = URLEncoder.encode(sessionSerialized, "UTF-8") + "|" +
           hmac
-      res.cookie(COOKIE_NAME, signed)
+      res.cookie("/", COOKIE_NAME, signed, YEAR_IN_SECONDS, false)
 
       return newSession
     } finally {
