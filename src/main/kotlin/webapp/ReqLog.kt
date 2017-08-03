@@ -23,19 +23,25 @@ data class Step(
     val reqParts: String?) {
 }
 
+data class ThreadData(
+    val steps: LinkedList<Step>,
+    var userId: Int?
+)
+
 object ReqLog {
   private val logger = LoggerFactory.getLogger(ReqLog::class.java)
 
-  val steps = object : ThreadLocal<LinkedList<Step>>() {
-    override fun initialValue(): LinkedList<Step> {
-      return LinkedList<Step>()
+  val threadDatas = object : ThreadLocal<ThreadData>() {
+    override fun initialValue(): ThreadData {
+      return ThreadData(LinkedList<Step>(), null)
     }
   }
 
   fun start(req: Request) {
     val reqId = nextRequestId.getNextRequestId()
     val call = Thread.currentThread().getStackTrace()[2]
-    steps.get().push(Step(
+    val threadData = threadDatas.get()
+    threadData.steps.push(Step(
         call.className.substringAfterLast("."),
         call.methodName,
         System.currentTimeMillis(),
@@ -46,13 +52,17 @@ object ReqLog {
             "path=${req.pathInfo()} " +
             "query=\"${req.queryString()}\" " +
             "userAgent=\"${req.userAgent()}\" " +
-            "protocol=${req.protocol()} "
+            "protocol=${req.protocol()}"
 
     ))
   }
 
+  fun setUserId(userId: Int?) {
+    threadDatas.get().userId = userId
+  }
+
   fun start() {
-    val localSteps = steps.get()
+    val localSteps = threadDatas.get().steps
     if (localSteps.size > 0) {
       val call = Thread.currentThread().getStackTrace()[2]
       localSteps.push(Step(
@@ -66,11 +76,19 @@ object ReqLog {
   }
 
   fun finish() {
-    val localSteps = steps.get()
-    if (localSteps.size > 0) {
-      val step = localSteps.pop()
+    val threadData = threadDatas.get()
+    if (threadData.steps.size > 0) {
+      val step = threadData.steps.pop()
       val millis = System.currentTimeMillis() - step.startMillis
-      logger.info("${step.reqParts ?: ""}call=${step.className}.${step.methodName} ms=${millis} reqId=${step.reqId}")
+      val reqSpecific =
+          if (step.reqParts != null)
+            "${step.reqParts} userId=${threadData.userId} "
+          else
+            ""
+      logger.info(reqSpecific +
+          "call=${step.className}.${step.methodName} " +
+          "ms=${millis} " +
+          "reqId=${step.reqId}")
     }
   }
 }

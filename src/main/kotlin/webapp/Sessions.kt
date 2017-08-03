@@ -88,6 +88,7 @@ data class SessionStorage(val secret: String) {
       val session = Gson().fromJson(
           URLDecoder.decode(sessionSerialized, "UTF-8"),
           Session::class.java)
+      ReqLog.setUserId(session.userId)
       return session
     } catch (e: com.google.gson.JsonSyntaxException) {
       logger.warn("method=load_session cookieValue=\"${cookieValue}\" exception=${e.message} error=bad_json")
@@ -98,6 +99,8 @@ data class SessionStorage(val secret: String) {
   fun updateSession(oldSession: Session, res: Response): Session {
     ReqLog.start()
     try {
+      ReqLog.setUserId(oldSession.userId)
+
       val bytes = ByteArray(CSRF_VALUE_LENGTH * 6 / 8)
       secureRandom.nextBytes(bytes)
       val newCsrfValue = Base64.getUrlEncoder().encodeToString(bytes)
