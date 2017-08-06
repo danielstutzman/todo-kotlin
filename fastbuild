@@ -1,10 +1,12 @@
 #!/bin/bash -e
 NAILGUN_DIR=../nailgun-nailgun-all-0.9.1
-KOTLINC_DIR=../kotlinc
+#KOTLINC_DIR=../kotlinc
+#KOTLINC_DIR=~/dev/kotlin/dist/kotlinc
+KOTLINC_DIR=~/dev/kotlin-compiler-1.1.3
 
 if [[ `ps aux | grep NGServer | grep -v grep` = "" ]]; then
   echo "Starting Nailgun server..."
-  java -Xmx1024M -Xms32M -noverify \
+  java -Xmx2024M -Xms2024M -verbose:gc \
     -cp $NAILGUN_DIR/nailgun-server/target/classes:$KOTLINC_DIR/lib/kotlin-preloader.jar:$KOTLINC_DIR/lib/kotlin-compiler.jar \
     com.martiansoftware.nailgun.NGServer &
 fi
@@ -39,14 +41,33 @@ if [ "$RECOMPILE_VIEWS" != "" ]; then
     -d target/classes
 fi
 
-echo "Compiling .kt to .class"
-time $NAILGUN_DIR/ng \
-  org.jetbrains.kotlin.preloading.Preloader \
-  org.jetbrains.kotlin.cli.jvm.K2JVMCompiler \
-  `find src/main/kotlin -name "*.kt"` \
-  `find src/test/kotlin -name "*.kt"` \
-  -d $PWD/target/classes \
-  -cp `cat .mvn-classpath`:target/classes
+#  `find src/main/kotlin -name "*.kt"` \
+#  `find src/test/kotlin -name "*.kt"` \
+
+for KT in `find src/main/kotlin -name "*.kt"` `find src/test/kotlin -name "*.kt"`; do
+  CLASS=$KT
+
+  # replace src/main/kotlin/ with target/classes
+  CLASS=${CLASS/src\/main\/kotlin\//target\/classes\/}
+
+  # replace src/test/kotlin/ with target/classes
+  CLASS=${CLASS/src\/test\/kotlin\//target\/classes\/}
+
+  if [[ $KT -nt ${CLASS/.kt/.class} && $KT -nt ${CLASS/.kt/Kt.class} ]]; then
+    KTS="$KTS $KT"
+  fi
+done
+
+if [ "$KTS" != "" ]; then
+  echo "Compiling .kt to .class"
+  echo $KTS
+  time $NAILGUN_DIR/ng \
+    org.jetbrains.kotlin.preloading.Preloader \
+    org.jetbrains.kotlin.cli.jvm.K2JVMCompiler \
+    $KTS \
+    -d $PWD/target/classes \
+    -cp `cat .mvn-classpath`:target/classes
+fi
 
 if [ "$1" == "scrape" ]; then
   java -cp $(cat .mvn-classpath):target/classes \
