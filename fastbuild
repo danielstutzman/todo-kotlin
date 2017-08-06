@@ -9,6 +9,7 @@ if [[ `ps aux | grep NGServer | grep -v grep` = "" ]]; then
   java -Xmx2024M -Xms2024M -verbose:gc \
     -cp $NAILGUN_DIR/nailgun-server/target/classes:$KOTLINC_DIR/lib/kotlin-preloader.jar:$KOTLINC_DIR/lib/kotlin-compiler.jar \
     com.martiansoftware.nailgun.NGServer &
+  sleep 1
 fi
 
 for HTML in `find src/main/resources/rocker/views -name "*.rocker.html"`; do
